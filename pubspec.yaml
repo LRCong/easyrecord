@@ -32,6 +32,9 @@ dependencies:
   sqflite: ^1.3.0
   gesture_recognition: ^1.0.1
   shared_preferences: ^0.5.10
+  flutter_picker: ^1.1.5
+  fl_chart: ^0.11.1
+  local_auth: ^0.6.3+2
 
 dev_dependencies:
   flutter_test:

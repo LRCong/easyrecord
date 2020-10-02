@@ -16,14 +16,12 @@ class _TabState extends State<Tabs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("随便记"),
+        title: Text("简单记"),
       ),
       body: Home(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            onTap(1);
-          });
+          Navigator.pushNamed(context, '/Record');
         },
         child: Icon(
           Icons.add,
@@ -75,6 +73,7 @@ class _TabState extends State<Tabs> {
                 onTap: () {
                   setState(() {
                     onTap(2);
+                    Navigator.pushNamed(context, "/Chart");
                   });
                 },
                 child: Column(

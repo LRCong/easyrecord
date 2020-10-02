@@ -103,10 +103,11 @@ class _PwSettingState extends State<PwSetting> {
               trailing: Radio(
                 value: 3,
                 onChanged: (value) {
-                  setState(() {
-                    this._PwType = value;
-                    setWhichPw(3);
-                  });
+                  // setState(() {
+                  //   this._PwType = value;
+                  //   setWhichPw(3);
+                  // });
+                  Navigator.pushNamed(context, "/FingerPwRecognition");
                 },
                 groupValue: this._PwType,
               ),

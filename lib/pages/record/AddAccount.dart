@@ -38,27 +38,8 @@ class _AddAcountPageState extends State<AddAccountPage> {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: ListTile(
-            leading: Icon(
-              Icons.account_balance_wallet,
-              size: 32.0,
-            ),
-            title: Text(theType),
-            subtitle: Text("账户类型"),
-            onTap: () {
-              JhPickerTool.showStringPicker(context,
-                  data: accountType,
-                  normalIndex: 0,
-                  title: "请选择账户类型", clickCallBack: (int index, var str) {
-                print(index);
-                setState(() {
-                  this.theType = str;
-                });
-              });
-            },
-          ),
+        SizedBox(
+          height: 10.0,
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(20, 5, 20, 20),

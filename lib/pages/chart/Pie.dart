@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:date_format/date_format.dart';
 import 'indicator.dart';
+
+import '../record/jh_picker_tool.dart';
 
 /// Icons by svgrepo.com (https://www.svgrepo.com/collection/job-and-professions-3/)
 class PiePage extends StatefulWidget {
@@ -11,6 +14,9 @@ class PiePage extends StatefulWidget {
 
 class PiePageState extends State {
   int touchedIndex;
+  var beginTime = DateTime.now();
+  var endTime = DateTime.now();
+  var pieType = '支出图表按一级类别';
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +66,40 @@ class PiePageState extends State {
                       height: 16,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.black,
+                        color: Color(0xff0293ee),
                       ),
                     ),
                     const SizedBox(
                       width: 4,
                     ),
                     Text(
-                      'two',
+                      'zero',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: touchedIndex == 0 ? Colors.black : Colors.grey,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xfff8b250),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      'one',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -86,7 +118,7 @@ class PiePageState extends State {
                       height: 16,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.black,
+                        color: Color(0xff845bef),
                       ),
                     ),
                     const SizedBox(
@@ -97,7 +129,33 @@ class PiePageState extends State {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: touchedIndex == 1 ? Colors.black : Colors.grey,
+                        color: touchedIndex == 2 ? Colors.black : Colors.grey,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xff13d38e),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      'three',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: touchedIndex == 3 ? Colors.black : Colors.grey,
                       ),
                     )
                   ],
@@ -116,30 +174,89 @@ class PiePageState extends State {
           child: new Column(
             children: [
               new ListTile(
-                title: new Text('支出图表按一级类别',
-                    style: new TextStyle(fontWeight: FontWeight.w500)),
-                subtitle: new Text('图表类型'),
-                leading: new Icon(
-                  Icons.view_list,
-                  color: Colors.blue[500],
-                ),
-              ),
+                  title: new Text(pieType,
+                      style: new TextStyle(fontWeight: FontWeight.w500)),
+                  subtitle: new Text('图表类型'),
+                  leading: new Icon(
+                    Icons.view_list,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    JhPickerTool.showStringPicker(context,
+                        data: pieTypes,
+                        normalIndex: 0,
+                        title: "请选择图表类型", clickCallBack: (int index, var str) {
+                      print(index);
+                      setState(() {
+                        this.pieType = str;
+                      });
+                    });
+                  }),
               new Divider(),
               new ListTile(
-                title: new Text('起始时间',
-                    style: new TextStyle(fontWeight: FontWeight.w500)),
-                leading: new Icon(
-                  Icons.keyboard_arrow_right,
-                  color: Colors.blue[500],
-                ),
-              ),
+                  title: new Text(
+                      '起始时间' +
+                          "  " +
+                          formatDate(beginTime, [yyyy, "年", mm, "月", d, "日"]),
+                      style: new TextStyle(fontWeight: FontWeight.w500)),
+                  leading: new Icon(
+                    Icons.keyboard_arrow_right,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    JhPickerTool.showDatePicker(
+                      context,
+//            dateType: DateType.YMD,
+//            dateType: DateType.YM,
+//            dateType: DateType.YMD_HM,
+//            dateType: DateType.YMD_AP_HM,
+                      title: "请选择时间",
+//            minValue: DateTime(2020,10,10),
+//            maxValue: DateTime(2023,10,10),
+//            value: DateTime(2020,10,10),
+                      clickCallback: (var str, var time) {
+                        setState(() {
+                          this.beginTime = DateTime(
+                              int.parse(str.split("-")[0]),
+                              int.parse(str.split("-")[1]),
+                              int.parse(str.split("-")[2]));
+                        });
+                        print(time);
+                      },
+                    );
+                  }),
               new ListTile(
-                title: new Text('结束时间'),
-                leading: new Icon(
-                  Icons.keyboard_arrow_left,
-                  color: Colors.blue[500],
-                ),
-              ),
+                  title: new Text(
+                    '结束时间' +
+                        "  " +
+                        formatDate(endTime, [yyyy, "年", mm, "月", d, "日"]),
+                  ),
+                  leading: new Icon(
+                    Icons.keyboard_arrow_left,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    JhPickerTool.showDatePicker(
+                      context,
+//            dateType: DateType.YMD,
+//            dateType: DateType.YM,
+//            dateType: DateType.YMD_HM,
+//            dateType: DateType.YMD_AP_HM,
+                      title: "请选择时间",
+//            minValue: DateTime(2020,10,10),
+//            maxValue: DateTime(2023,10,10),
+//            value: DateTime(2020,10,10),
+                      clickCallback: (var str, var time) {
+                        setState(() {
+                          this.endTime = DateTime(
+                              int.parse(str.split("-")[0]),
+                              int.parse(str.split("-")[1]),
+                              int.parse(str.split("-")[2]));
+                        });
+                        print(time);
+                      },
+                    );
+                  }),
             ],
           ),
         ),
@@ -204,3 +321,12 @@ class PiePageState extends State {
     });
   }
 }
+
+var pieTypes = [
+  "支出图表按一级类别",
+  "支出图表按二级类别",
+  "支出图表按成员",
+  "收入图表按一级类别",
+  "收入图表按二级类别",
+  "收入图表按成员",
+];

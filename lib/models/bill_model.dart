@@ -61,28 +61,79 @@ class Item {
 }
 
 //目录
-class Category {
+class outcomeCategory {
   String mainType;
   String subType;
-  int type;
   int sort;
 
-  Category({this.mainType, this.subType, this.type, this.sort});
+  outcomeCategory({this.mainType, this.subType, this.sort});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       columnMainType: mainType,
       columnSubType: subType,
-      columnType: type,
       columnsort: sort
     };
     return map;
   }
 
-  Category.fromMap(Map<String, dynamic> map) {
+  outcomeCategory.fromMap(Map<String, dynamic> map) {
     mainType = map[columnMainType];
     subType = map[columnSubType];
     sort = map[columnsort];
-    type = map[columnType];
+  }
+}
+
+//目录
+class incomeCategory {
+  String mainType;
+  int sort;
+
+  incomeCategory({this.mainType, this.sort});
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{columnMainType: mainType, columnsort: sort};
+    return map;
+  }
+
+  incomeCategory.fromMap(Map<String, dynamic> map) {
+    mainType = map[columnMainType];
+    sort = map[columnsort];
+  }
+}
+
+//目录
+class accountCategory {
+  String account;
+  int sort;
+
+  accountCategory({this.account, this.sort});
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{columnAccount: account, columnsort: sort};
+    return map;
+  }
+
+  accountCategory.fromMap(Map<String, dynamic> map) {
+    account = map[columnAccount];
+    sort = map[columnsort];
+  }
+}
+
+//目录
+class memberCategory {
+  String member;
+  int sort;
+
+  memberCategory({this.member, this.sort});
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{columnMember: member, columnsort: sort};
+    return map;
+  }
+
+  memberCategory.fromMap(Map<String, dynamic> map) {
+    member = map[columnMember];
+    sort = map[columnsort];
   }
 }

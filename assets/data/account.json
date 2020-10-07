@@ -1,0 +1,51 @@
+[
+    {
+        "account": "现金",
+        "sort": 0
+    },
+    {
+        "account": "信用卡",
+        "sort": 1
+    }
+    ,
+    {
+        "account": "银行卡",
+        "sort": 2
+    },
+    {
+        "account": "股票",
+        "sort": 3
+    },
+    {
+        "account": "基金",
+        "sort": 4
+    },
+    {
+        "account": "支付宝",
+        "sort": 5
+    },
+    {
+        "account": "微信",
+        "sort": 6
+    },
+    {
+        "account": "白条",
+        "sort": 7
+    },
+    {
+        "account": "公交卡",
+        "sort": 8
+    },
+    {
+        "account": "负债",
+        "sort": 9
+    },
+    {
+        "account": "公司报销",
+        "sort": 10
+    },
+    {
+        "account": "债权",
+        "sort": 11
+    }
+]

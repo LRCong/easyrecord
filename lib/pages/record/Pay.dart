@@ -177,16 +177,6 @@ class _PayPageState extends State<PayPage> {
               onPressed: () {
                 print("已保存");
                 Navigator.pop(context);
-                dbHelp.getInitialCategory().then((list) {
-                  print(list.length);
-                  for (int i = 0; i < list.length; i++) {
-                    Map map = list[i];
-                    print(map["mainType"]);
-                    print(map["subType"]);
-                    print(map["type"]);
-                    print(map["sort"]);
-                  }
-                });
               },
               color: Colors.blue,
               textColor: Colors.white,

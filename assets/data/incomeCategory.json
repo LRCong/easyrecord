@@ -1,0 +1,54 @@
+[
+    {
+        "mainType": "工资",
+        "sort": 0
+    },
+    {
+        "mainType": "经营",
+        "sort": 1
+    },
+    {
+        "mainType": "利息",
+        "sort": 2
+    },
+    {
+        "mainType": "兼职",
+        "sort": 3
+    },
+    {
+        "mainType": "投资",
+        "sort": 4
+    },
+    {
+        "mainType": "奖金",
+        "sort": 5
+    },
+    {
+        "mainType": "加班",
+        "sort": 6
+    },
+    {
+        "mainType": "礼金",
+        "sort": 7
+    },
+    {
+        "mainType": "抢红包",
+        "sort": 8
+    },
+    {
+        "mainType": "意外来钱",
+        "sort": 9
+    },
+    {
+        "mainType": "家里给钱",
+        "sort": 10
+    },
+    {
+        "mainType": "中奖",
+        "sort": 11
+    },
+    {
+        "mainType": "退税",
+        "sort": 12
+    }
+]

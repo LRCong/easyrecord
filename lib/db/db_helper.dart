@@ -22,7 +22,13 @@ class Dbhelper {
   final _billTableName = 'BillRecord';
 
   //类型表
-  final _initialCategory = 'initialCategory';
+  final _incomeCategory = 'incomeCategory';
+
+  final _outcomeCategory = 'outcomeCategory';
+
+  final _accountCategory = 'accountCategory';
+
+  final _memberCategory = 'memberCategory';
 
   /// 获取数据库
   Future<Database> get db async {
@@ -61,54 +67,131 @@ class Dbhelper {
     )
     """;
     await db.execute(queryBill);
-
+    //建立支出类别表
     String queryStringCategory = """
-    CREATE TABLE $_initialCategory(
+    CREATE TABLE $_outcomeCategory(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       mainType TEXT,
       subType TEXT,
-      type INTEGER,
       sort INTEGER
     )
     """;
     await db.execute(queryStringCategory);
 
-    // 初始化收入类别表数据
-    rootBundle.loadString('assets/data/category.json').then((value) {
+    //建立收入类别表
+    String queryStringCategory2 = """
+    CREATE TABLE $_incomeCategory(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      mainType TEXT,
+      sort INTEGER
+    )
+    """;
+    await db.execute(queryStringCategory2);
+
+    //建立账户类别表
+    String queryStringCategory3 = """
+    CREATE TABLE $_accountCategory(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      account TEXT,
+      sort INTEGER
+    )
+    """;
+    await db.execute(queryStringCategory3);
+
+    //建立成员类别表
+    String queryStringCategory4 = """
+    CREATE TABLE $_memberCategory(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      member TEXT,
+      sort INTEGER
+    )
+    """;
+    await db.execute(queryStringCategory4);
+
+    // 初始化支出类别表数据
+    rootBundle.loadString('assets/data/outcomeCategory.json').then((value) {
       List list = jsonDecode(value);
-      List<Category> models = list.map((i) => Category.fromMap(i)).toList();
+      List<outcomeCategory> models =
+          list.map((i) => outcomeCategory.fromMap(i)).toList();
       models.forEach((item) async {
-        //print('heiehi');
-        //print(item.mainType);
-        await db.insert(_initialCategory, item.toMap());
+        await db.insert(_outcomeCategory, item.toMap());
       });
-      //print("哈哈");
+    });
+
+    // 初始化收入类别表数据
+    rootBundle.loadString('assets/data/incomeCategory.json').then((value) {
+      List list = jsonDecode(value);
+      List<incomeCategory> models =
+          list.map((i) => incomeCategory.fromMap(i)).toList();
+      models.forEach((item) async {
+        await db.insert(_incomeCategory, item.toMap());
+      });
+    });
+
+    // 初始化账户类别表数据
+    rootBundle.loadString('assets/data/account.json').then((value) {
+      List list = jsonDecode(value);
+      List<accountCategory> models =
+          list.map((i) => accountCategory.fromMap(i)).toList();
+      models.forEach((item) async {
+        await db.insert(_accountCategory, item.toMap());
+      });
+    });
+
+    // 初始化成员类别表数据
+    rootBundle.loadString('assets/data/member.json').then((value) {
+      List list = jsonDecode(value);
+      List<memberCategory> models =
+          list.map((i) => memberCategory.fromMap(i)).toList();
+      models.forEach((item) async {
+        await db.insert(_memberCategory, item.toMap());
+      });
     });
   }
 
-  /// 获取记账类别列表
+  /// 获取记账支出类别列表
   /*
   传参：无
 
   返回：List<MAP<String, dynamic>>   每个MAP为一个目录类型包含mainType（一级目录）
-  subType（二级目录） type（类型，支出还是收入） sort（序号）  具体可见Category类的相关信息
+  subType（二级目录） sort（序号）  具体可见Category类的相关信息
   
   调用示例：
-    dbHelp.getInitialCategory().then((list) {
+    dbHelp.getOutcomeCategory().then((list) {
                         print(list.length);
                         for (int i = 0; i < list.length; i++) {
                           Map map = list[i];
                           print(map["mainType"]);   
                           print(map["subType"]);
-                          print(map["type"]);
                           print(map["sort"]);
                         }
                       });
   */
-  Future<List> getInitialCategory() async {
+  Future<List> getOutcomeCategory() async {
     var dbClient = await db;
     var result = await dbClient
-        .rawQuery('SELECT * FROM $_initialCategory ORDER BY sort ASC');
+        .rawQuery('SELECT * FROM $_outcomeCategory ORDER BY sort ASC');
+    return result.toList();
+  }
+
+  Future<List> getIncomeCategory() async {
+    var dbClient = await db;
+    var result = await dbClient
+        .rawQuery('SELECT * FROM $_incomeCategory ORDER BY sort ASC');
+    return result.toList();
+  }
+
+  Future<List> getAccountCategory() async {
+    var dbClient = await db;
+    var result = await dbClient
+        .rawQuery('SELECT * FROM $_accountCategory ORDER BY sort ASC');
+    return result.toList();
+  }
+
+  Future<List> getMemberCategory() async {
+    var dbClient = await db;
+    var result = await dbClient
+        .rawQuery('SELECT * FROM $_memberCategory ORDER BY sort ASC');
     return result.toList();
   }
 

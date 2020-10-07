@@ -1,0 +1,313 @@
+[
+    {
+        "mainType": "餐饮",
+        "subType": "三餐",
+        "sort": 0
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "早餐",
+        "sort": 1
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "中餐",
+        "sort": 2
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "晚餐",
+        "sort": 3
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "买菜",
+        "sort": 4
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "水果",
+        "sort": 5
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "零食",
+        "sort": 6
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "加餐",
+        "sort": 7
+    },
+    {
+       
+        "mainType": "餐饮",
+        "subType": "下午茶",
+        "sort": 8
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "烟酒饮品",
+        "sort": 9
+    },
+    {
+        "mainType": "餐饮",
+        "subType": "粮油调料",
+        "sort": 10
+    },
+    {
+        "mainType": "交通",
+        "subType": "公交地铁",
+        "sort": 11
+    },
+    {
+        "mainType": "交通",
+        "subType": "打车",
+        "sort": 12
+    },
+    {
+        "mainType": "交通",
+        "subType": "私家车",
+        "sort": 13
+    },
+    {
+        "mainType": "交通",
+        "subType": "飞机火车",
+        "sort": 14
+    },
+    {
+        "mainType": "交通",
+        "subType": "共享单车",
+        "sort": 15
+    },
+    {
+        "mainType": "购物",
+        "subType": "日用品",
+        "sort": 16
+    },
+    {
+        "mainType": "购物",
+        "subType": "衣帽鞋包",
+        "sort": 17
+    },
+    {
+        "mainType": "购物",
+        "subType": "护肤美妆",
+        "sort": 18
+    },
+    {
+        "mainType": "购物",
+        "subType": "饰品",
+        "sort": 19
+    },
+    {
+        "mainType": "购物",
+        "subType": "数码",
+        "sort": 20
+    },
+    {
+        "mainType": "购物",
+        "subType": "电器",
+        "sort": 21
+    },
+    {
+        "mainType": "购物",
+        "subType": "家装",
+        "sort": 22
+    },
+    {
+        "mainType": "购物",
+        "subType": "家装",
+        "sort": 23
+    },
+    {
+        "mainType": "居家",
+        "subType": "水电煤",
+        "sort": 24
+    },
+    {
+        "mainType": "居家",
+        "subType": "话费",
+        "sort": 25
+    },
+    {
+        "mainType": "居家",
+        "subType": "网费",
+        "sort": 26
+    },
+    {
+        "mainType": "居家",
+        "subType": "房租",
+        "sort": 27
+    },
+    {
+        "mainType": "居家",
+        "subType": "物业",
+        "sort": 28
+    },
+    {
+        "mainType": "居家",
+        "subType": "维修",
+        "sort": 29
+    },
+    {
+        "mainType": "人情",
+        "subType": "送礼",
+        "sort": 30
+    },
+    {
+        "mainType": "人情",
+        "subType": "请客",
+        "sort": 31
+    },
+    {
+        "mainType": "人情",
+        "subType": "孝心",
+        "sort": 32
+    },
+    {
+        "mainType": "人情",
+        "subType": "亲密付",
+        "sort": 33
+    },
+    {
+        "mainType": "人情",
+        "subType": "发红包",
+        "sort": 34
+    },
+    {
+        "mainType": "人情",
+        "subType": "借出",
+        "sort": 35
+    },
+    {
+        "mainType": "人情",
+        "subType": "还钱",
+        "sort": 36
+    },
+    {
+        "mainType": "医疗",
+        "subType": "药品",
+        "sort": 37
+    },
+    {
+        "mainType": "医疗",
+        "subType": "保健",
+        "sort": 38
+    },
+    {
+        "mainType": "医疗",
+        "subType": "治疗",
+        "sort": 39
+    },
+    {
+        "mainType": "医疗",
+        "subType": "美容",
+        "sort": 40
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "休闲",
+        "sort": 41
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "约会",
+        "sort": 42
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "聚会",
+        "sort": 43
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "游戏",
+        "sort": 44
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "健身",
+        "sort": 45
+    },
+    {
+        "mainType": "学习",
+        "subType": "书籍",
+        "sort": 46
+    },
+    {
+        "mainType": "学习",
+        "subType": "培训",
+        "sort": 47
+    },
+    {
+        "mainType": "学习",
+        "subType": "网课",
+        "sort": 48
+    },
+    {
+        "mainType": "金融",
+        "subType": "房贷",
+        "sort": 49
+    },
+    {
+        "mainType": "金融",
+        "subType": "车贷",
+        "sort": 50
+    },
+    {
+        "mainType": "金融",
+        "subType": "购物分期",
+        "sort": 51
+    },
+    {
+        "mainType": "金融",
+        "subType": "手续费",
+        "sort": 52
+    },
+    {
+        "mainType": "金融",
+        "subType": "保险",
+        "sort": 53
+    },
+    {
+        "mainType": "金融",
+        "subType": "养卡",
+        "sort": 54
+    },
+    {
+        "mainType": "其他",
+        "subType": "旅游",
+        "sort": 55
+    },
+    {
+        "mainType": "其他",
+        "subType": "装修",
+        "sort": 56
+    },
+    {
+        "mainType": "其他",
+        "subType": "宝宝",
+        "sort": 57
+    },
+    {
+        "mainType": "其他",
+        "subType": "生意",
+        "sort": 58
+    },
+    {
+        "mainType": "其他",
+        "subType": "宠物",
+        "sort": 59
+    },
+    {
+        "mainType": "其他",
+        "subType": "坏账",
+        "sort": 60
+    },
+    {
+        "mainType": "其他",
+        "subType": "丢失",
+        "sort": 61
+    }
+]

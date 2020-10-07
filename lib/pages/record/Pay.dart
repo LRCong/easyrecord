@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
 
+import 'package:easyrecord/db/db_helper.dart';
+
 class PayPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -19,6 +21,7 @@ class _PayPageState extends State<PayPage> {
   var theSubType = "三餐";
   var theMember = "本人";
   var theTime = DateTime.now();
+  var dbHelper = Dbhelper();
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +177,16 @@ class _PayPageState extends State<PayPage> {
               onPressed: () {
                 print("已保存");
                 Navigator.pop(context);
+                dbHelp.getInitialCategory().then((list) {
+                  print(list.length);
+                  for (int i = 0; i < list.length; i++) {
+                    Map map = list[i];
+                    print(map["mainType"]);
+                    print(map["subType"]);
+                    print(map["type"]);
+                    print(map["sort"]);
+                  }
+                });
               },
               color: Colors.blue,
               textColor: Colors.white,

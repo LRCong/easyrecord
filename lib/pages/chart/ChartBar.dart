@@ -2,6 +2,8 @@ import 'package:easyrecord/pages/chart/Line.dart';
 import 'package:easyrecord/pages/chart/Pie.dart';
 import 'package:flutter/material.dart';
 
+import 'Line.dart';
+
 class ChartBarPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -43,7 +45,7 @@ class _ChartBarPageState extends State<ChartBarPage>
                 text: "饼状",
               ),
               Tab(
-                text: "条线",
+                text: "柱状",
               ),
             ],
             controller: _tabController,

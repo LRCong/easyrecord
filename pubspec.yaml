@@ -35,7 +35,7 @@ dependencies:
   flutter_picker: ^1.1.5
   fl_chart: ^0.11.1
   local_auth: ^0.6.3+2
-
+  path_provider: ^1.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,7 +59,7 @@ flutter:
   assets:
     - assets/images/sea1.jpg
     - assets/images/sea2.jpg
-
+    - assets/data/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

@@ -1,0 +1,14 @@
+[
+    {
+        "mainType": "吃喝",
+        "subType": "饮料",
+        "type": 0,
+        "sort": 0
+    },
+    {
+        "mainType": "娱乐",
+        "subType": "游戏",
+        "type": 1,
+        "sort": 1
+    }
+]

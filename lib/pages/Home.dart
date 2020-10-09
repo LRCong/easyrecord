@@ -45,139 +45,155 @@ class _HomeState extends State<Home> {
             _pay++;
           });
         },
-        child: ListView(
-          children: [
-            Container(
-              child: Stack(
-                alignment: AlignmentDirectional.topCenter,
-                fit: StackFit.expand,
-                children: [
-                  Image.asset(
-                    "assets/images/sea2.jpg",
-                    alignment: Alignment.topCenter,
-                    fit: BoxFit.cover,
+        child: Column(children: [
+          SizedBox(
+              height: 250.0, //设置高度
+              child: new Card(
+                elevation: 15.0, //设置阴影
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(14.0))), //设置圆角
+                child: Container(
+                  child: Stack(
+                    alignment: AlignmentDirectional.topCenter,
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        "assets/images/sea2.jpg",
+                        alignment: Alignment.topCenter,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              height: 200,
-            ),
-            ListTile(
-              onTap: () {},
-              leading: Icon(
-                Icons.history,
-                size: 40,
-                color: Colors.blue,
-              ),
-              title: Text("今天"),
-              subtitle: Text("消费${_pay}"),
-              trailing: Column(
-                children: [
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    "收入0",
-                    style: TextStyle(color: Colors.lightBlue),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Text(
-                    "支出${_pay}",
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            ListTile(
-              onTap: () {},
-              leading: Icon(
-                Icons.shopping_cart,
-                size: 40,
-                color: Colors.blue,
-              ),
-              title: Text("本周"),
-              subtitle: Text("消费${_pay}"),
-              trailing: Column(
-                children: [
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    "收入0",
-                    style: TextStyle(color: Colors.lightBlue),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Text(
-                    "支出${_pay}",
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            ListTile(
-              onTap: () {},
-              leading: Icon(
-                Icons.line_weight,
-                size: 40,
-                color: Colors.blue,
-              ),
-              title: Text("本月"),
-              subtitle: Text("消费${_pay}"),
-              trailing: Column(
-                children: [
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    "收入0",
-                    style: TextStyle(color: Colors.lightBlue),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Text(
-                    "支出${_pay}",
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            ListTile(
-              onTap: () {},
-              leading: Icon(
-                Icons.calendar_today,
-                size: 40,
-                color: Colors.blue,
-              ),
-              title: Text("本年"),
-              subtitle: Text("消费${_pay}"),
-              trailing: Column(
-                children: [
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    "收入0",
-                    style: TextStyle(color: Colors.lightBlue),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Text(
-                    "支出${_pay}",
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-          ],
-        ));
+                  height: 200,
+                ),
+              )),
+          SizedBox(
+              height: 350.0, //设置高度
+              child: new Card(
+                  elevation: 15.0, //设置阴影
+                  shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(14.0))), //设置圆角
+                  child: new Column(
+                      // card只能有一个widget，但这个widget内容可以包含其他的widget
+                      children: [
+                        ListTile(
+                          onTap: () {},
+                          leading: Icon(
+                            Icons.history,
+                            size: 40,
+                            color: Colors.blue,
+                          ),
+                          title: Text("今天"),
+                          subtitle: Text("消费${_pay}"),
+                          trailing: Column(
+                            children: [
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                "收入0",
+                                style: TextStyle(color: Colors.lightBlue),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                "支出${_pay}",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        ListTile(
+                          onTap: () {},
+                          leading: Icon(
+                            Icons.shopping_cart,
+                            size: 40,
+                            color: Colors.blue,
+                          ),
+                          title: Text("本周"),
+                          subtitle: Text("消费${_pay}"),
+                          trailing: Column(
+                            children: [
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                "收入0",
+                                style: TextStyle(color: Colors.lightBlue),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                "支出${_pay}",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        ListTile(
+                          onTap: () {},
+                          leading: Icon(
+                            Icons.line_weight,
+                            size: 40,
+                            color: Colors.blue,
+                          ),
+                          title: Text("本月"),
+                          subtitle: Text("消费${_pay}"),
+                          trailing: Column(
+                            children: [
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                "收入0",
+                                style: TextStyle(color: Colors.lightBlue),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                "支出${_pay}",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        ListTile(
+                          onTap: () {},
+                          leading: Icon(
+                            Icons.calendar_today,
+                            size: 40,
+                            color: Colors.blue,
+                          ),
+                          title: Text("本年"),
+                          subtitle: Text("消费${_pay}"),
+                          trailing: Column(
+                            children: [
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                "收入0",
+                                style: TextStyle(color: Colors.lightBlue),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                "支出${_pay}",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ])))
+        ]));
   }
 }

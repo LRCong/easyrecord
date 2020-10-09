@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
 
+import 'package:easyrecord/db/db_helper.dart';
+
 class PayPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -19,11 +21,12 @@ class _PayPageState extends State<PayPage> {
   var theSubType = "三餐";
   var theMember = "本人";
   var theTime = DateTime.now();
+  var dbHelper = Dbhelper();
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return ListView(
+    return Column(
       children: [
         SizedBox(
           height: 10,
@@ -45,124 +48,143 @@ class _PayPageState extends State<PayPage> {
             keyboardType: TextInputType.number,
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child: ListTile(
-            leading: Icon(
-              Icons.account_balance_wallet,
-              size: 32.0,
-            ),
-            title: Text(theType),
-            subtitle: Text("选择账户"),
-            onTap: () {
-              JhPickerTool.showStringPicker(context,
-                  data: accountType,
-                  normalIndex: 0,
-                  title: "请选择账户类型", clickCallBack: (int index, var str) {
-                print(index);
-                setState(() {
-                  this.theType = str;
-                });
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-          child: ListTile(
-            leading: Icon(
-              Icons.menu,
-              size: 32.0,
-            ),
-            title: Text(theMainType),
-            subtitle: Text("选择一级分类"),
-            onTap: () {
-              JhPickerTool.showStringPicker(context,
-                  data: mainType,
-                  title: "请选择一级分类",
-                  normalIndex: 0, clickCallBack: (var index, var str) {
-                print(index);
-                setState(() {
-                  this.theMainType = str;
-                });
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-          child: ListTile(
-            leading: Icon(
-              Icons.label_outline,
-              size: 32.0,
-            ),
-            title: Text(theSubType),
-            subtitle: Text("选择二级分类"),
-            onTap: () {
-              JhPickerTool.showStringPicker(context,
-                  data: subType,
-                  title: "请选择二级分类",
-                  normalIndex: 0, clickCallBack: (var index, var str) {
-                print(index);
-                setState(() {
-                  this.theSubType = str;
-                });
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-          child: ListTile(
-            leading: Icon(
-              Icons.people,
-              size: 32.0,
-            ),
-            title: Text(theMember),
-            subtitle: Text("选择成员"),
-            onTap: () {
-              JhPickerTool.showStringPicker(context,
-                  data: member,
-                  title: "请选择成员",
-                  normalIndex: 0, clickCallBack: (var index, var str) {
-                print(index);
-                setState(() {
-                  this.theMember = str;
-                });
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-          child: ListTile(
-            leading: Icon(
-              Icons.timelapse,
-              size: 32.0,
-            ),
-            title: Text(formatDate(theTime, [yyyy, "年", mm, "月", d, "日"])),
-            subtitle: Text("选择时间"),
-            onTap: () {
-              JhPickerTool.showDatePicker(context,
+        SizedBox(
+            height: 465.0, //设置高度
+            width: 350.0,
+            child: new Card(
+                elevation: 15.0, //设置阴影
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(14.0))), //设置圆角
+                child: new Column(children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.account_balance_wallet,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
+                      title: Text(theType),
+                      subtitle: Text("选择账户"),
+                      onTap: () {
+                        JhPickerTool.showStringPicker(context,
+                            data: accountType, normalIndex: 0, title: "请选择账户类型",
+                            clickCallBack: (int index, var str) {
+                          print(index);
+                          setState(() {
+                            this.theType = str;
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.menu,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
+                      title: Text(theMainType),
+                      subtitle: Text("选择一级分类"),
+                      onTap: () {
+                        JhPickerTool.showStringPicker(context,
+                            data: mainType, title: "请选择一级分类", normalIndex: 0,
+                            clickCallBack: (var index, var str) {
+                          print(index);
+                          setState(() {
+                            this.theMainType = str;
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.label_outline,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
+                      title: Text(theSubType),
+                      subtitle: Text("选择二级分类"),
+                      onTap: () {
+                        JhPickerTool.showStringPicker(context,
+                            data: subType, title: "请选择二级分类", normalIndex: 0,
+                            clickCallBack: (var index, var str) {
+                          print(index);
+                          setState(() {
+                            this.theSubType = str;
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.people,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
+                      title: Text(theMember),
+                      subtitle: Text("选择成员"),
+                      onTap: () {
+                        JhPickerTool.showStringPicker(context,
+                            data: member, title: "请选择成员", normalIndex: 0,
+                            clickCallBack: (var index, var str) {
+                          print(index);
+                          setState(() {
+                            this.theMember = str;
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.timelapse,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
+                      title: Text(
+                          formatDate(theTime, [yyyy, "年", mm, "月", d, "日"])),
+                      subtitle: Text("选择时间"),
+                      onTap: () {
+                        JhPickerTool.showDatePicker(context,
 //            dateType: DateType.YMD,
 //            dateType: DateType.YM,
 //            dateType: DateType.YMD_HM,
 //            dateType: DateType.YMD_AP_HM,
-                  title: "请选择时间",
+                            title: "请选择时间",
 //            minValue: DateTime(2020,10,10),
 //            maxValue: DateTime(2023,10,10),
 //            value: DateTime(2020,10,10),
-                  clickCallback: (var str, var time) {
-                setState(() {
-                  this.theTime = DateTime(
-                      int.parse(str.split("-")[0]),
-                      int.parse(str.split("-")[1]),
-                      int.parse(str.split("-")[2]));
-                });
-                print(time);
-              });
-            },
-          ),
+                            clickCallback: (var str, var time) {
+                          setState(() {
+                            this.theTime = DateTime(
+                                int.parse(str.split("-")[0]),
+                                int.parse(str.split("-")[1]),
+                                int.parse(str.split("-")[2]));
+                          });
+                          print(time);
+                        });
+                      },
+                    ),
+                  ),
+                ]))),
+        SizedBox(
+          height: 10.0,
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(20, 5, 20, 20),

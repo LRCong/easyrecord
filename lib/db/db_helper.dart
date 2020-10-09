@@ -83,6 +83,7 @@ class Dbhelper {
     CREATE TABLE $_incomeCategory(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       mainType TEXT,
+      subType TEXT,
       sort INTEGER
     )
     """;
@@ -290,6 +291,13 @@ class Dbhelper {
       print("获取某个账户全部账单");
       result = await dbClient.rawQuery(
           'SELECT * FROM $_billTableName WHERE account = "$account" ORDER BY createTimeStamp ASC');
+    } else if (member == null &&
+        account == null &&
+        startTime != null &&
+        endTime != null) {
+      print("获取某个时间段全部账单");
+      result = await dbClient.rawQuery(
+          'SELECT * FROM $_billTableName WHERE createTimeStamp >= $startTime and createTimeStamp <= $endTime ORDER BY createTimeStamp ASC');
     }
     var list = result.toList();
     if (list.length > 0) {

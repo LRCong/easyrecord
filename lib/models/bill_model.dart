@@ -87,17 +87,23 @@ class outcomeCategory {
 //目录
 class incomeCategory {
   String mainType;
+  String subType;
   int sort;
 
   incomeCategory({this.mainType, this.sort});
 
   Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{columnMainType: mainType, columnsort: sort};
+    var map = <String, dynamic>{
+      columnMainType: mainType,
+      columnSubType: subType,
+      columnsort: sort
+    };
     return map;
   }
 
   incomeCategory.fromMap(Map<String, dynamic> map) {
     mainType = map[columnMainType];
+    subType = map[columnSubType];
     sort = map[columnsort];
   }
 }

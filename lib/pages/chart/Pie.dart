@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:date_format/date_format.dart';
-import 'indicator.dart';
 
+import 'package:easyrecord/db/db_helper.dart';
+import 'package:easyrecord/models/bill_model.dart';
+import 'indicator.dart';
+import 'Colors.dart';
 import '../record/jh_picker_tool.dart';
 
 /// Icons by svgrepo.com (https://www.svgrepo.com/collection/job-and-professions-3/)
@@ -14,9 +17,51 @@ class PiePage extends StatefulWidget {
 
 class PiePageState extends State {
   int touchedIndex;
-  var beginTime = DateTime.now();
+  var beginTime = DateTime.now().subtract(Duration(days: 7));
   var endTime = DateTime.now();
   var pieType = '支出图表按一级类别';
+  List nodes = ["zero", "one", "two", "three"];
+  List values = [40, 30, 15, 15];
+  int sum = 100;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelp
+        .getAcount(
+      startTime: 0,
+      endTime: 1701125919708,
+    )
+        .then((value) {
+      if (value == null) return;
+      List newNodes = List();
+      List newValues = List();
+      var newSum = 0;
+      print(value.length);
+      for (int i = 0; i < value.length; i++) {
+        // print(value[i]);
+        Item tmp = Item.fromMap(value[i]);
+        if (tmp.type != 1) continue;
+        if (beginTime.millisecondsSinceEpoch > tmp.createTimeStamp) continue;
+        if (endTime.millisecondsSinceEpoch < tmp.createTimeStamp) continue;
+        newSum += tmp.cost.toInt();
+        if (!newNodes.contains(tmp.mainType)) {
+          newNodes.add(tmp.mainType);
+          newValues.add(tmp.cost);
+          continue;
+        }
+        newValues[newNodes.indexOf(tmp.mainType)] += tmp.cost;
+      }
+      print(newNodes);
+      print(newValues);
+      // print(newSum);
+      nodes = newNodes;
+      values = newValues;
+      sum = newSum;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,115 +99,9 @@ class PiePageState extends State {
             ),
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xff0293ee),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'zero',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: touchedIndex == 0 ? Colors.black : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xfff8b250),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'one',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: touchedIndex == 1 ? Colors.black : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xff845bef),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'two',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: touchedIndex == 2 ? Colors.black : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xff13d38e),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'three',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: touchedIndex == 3 ? Colors.black : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          )
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: getIndicator())
         ]),
       ),
       SizedBox(
@@ -187,9 +126,249 @@ class PiePageState extends State {
                         normalIndex: 0,
                         title: "请选择图表类型", clickCallBack: (int index, var str) {
                       print(index);
-                      setState(() {
-                        this.pieType = str;
-                      });
+                      this.pieType = str;
+                      switch (pieType) {
+                        case "支出图表按成员":
+                          dbHelp
+                              .getAcount(
+                            startTime: 0,
+                            endTime: 1701125919708,
+                          )
+                              .then((value) {
+                            List newNodes = List();
+                            List newValues = List();
+                            var newSum = 0;
+                            print(value.length);
+                            for (int i = 0; i < value.length; i++) {
+                              // print(value[i]);
+                              Item tmp = Item.fromMap(value[i]);
+                              if (tmp.type != 1) continue;
+                              print(tmp.createTimeStamp);
+
+                              if (beginTime.millisecondsSinceEpoch >
+                                  tmp.createTimeStamp) continue;
+                              print(endTime.millisecondsSinceEpoch);
+                              if (endTime.millisecondsSinceEpoch <
+                                  tmp.createTimeStamp) continue;
+                              newSum += tmp.cost.toInt();
+                              if (!newNodes.contains(tmp.member)) {
+                                newNodes.add(tmp.member);
+                                newValues.add(tmp.cost);
+                                continue;
+                              }
+                              newValues[newNodes.indexOf(tmp.member)] +=
+                                  tmp.cost;
+                            }
+                            print(newNodes);
+                            print(newValues);
+                            // print(newSum);
+                            nodes = newNodes;
+                            values = newValues;
+                            sum = newSum;
+                            setState(() {});
+                          });
+                          break;
+                        case "支出图表按一级类别":
+                          {
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              if (value == null) return;
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 1) continue;
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.mainType)) {
+                                  newNodes.add(tmp.mainType);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.mainType)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              setState(() {});
+                            });
+                          }
+                          break;
+                        case "支出图表按二级类别":
+                          {
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              if (value == null) return;
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 1) continue;
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.subType)) {
+                                  newNodes.add(tmp.subType);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.subType)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              setState(() {});
+                            });
+                          }
+                          break;
+                        case "收入图表按成员":
+                          dbHelp
+                              .getAcount(
+                            startTime: 0,
+                            endTime: 1701125919708,
+                          )
+                              .then((value) {
+                            List newNodes = List();
+                            List newValues = List();
+                            var newSum = 0;
+                            print(value.length);
+                            for (int i = 0; i < value.length; i++) {
+                              // print(value[i]);
+                              Item tmp = Item.fromMap(value[i]);
+                              if (tmp.type != 2) continue;
+                              print(tmp.createTimeStamp);
+
+                              if (beginTime.millisecondsSinceEpoch >
+                                  tmp.createTimeStamp) continue;
+                              print(endTime.millisecondsSinceEpoch);
+                              if (endTime.millisecondsSinceEpoch <
+                                  tmp.createTimeStamp) continue;
+                              newSum += tmp.cost.toInt();
+                              if (!newNodes.contains(tmp.member)) {
+                                newNodes.add(tmp.member);
+                                newValues.add(tmp.cost);
+                                continue;
+                              }
+                              newValues[newNodes.indexOf(tmp.member)] +=
+                                  tmp.cost;
+                            }
+                            print(newNodes);
+                            print(newValues);
+                            // print(newSum);
+                            nodes = newNodes;
+                            values = newValues;
+                            sum = newSum;
+                            setState(() {});
+                          });
+                          break;
+                        case "收入图表按一级类别":
+                          {
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              if (value == null) return;
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 2) continue;
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.mainType)) {
+                                  newNodes.add(tmp.mainType);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.mainType)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              setState(() {});
+                            });
+                          }
+                          break;
+                        case "收入图表按二级类别":
+                          {
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              if (value == null) return;
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 2) continue;
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.subType)) {
+                                  newNodes.add(tmp.subType);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.subType)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              setState(() {});
+                            });
+                          }
+                          break;
+                      }
                     });
                   }),
               new Divider(),
@@ -222,6 +401,248 @@ class PiePageState extends State {
                               int.parse(str.split("-")[2]));
                         });
                         print(time);
+                        switch (pieType) {
+                          case "支出图表按成员":
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 1) continue;
+                                print(tmp.createTimeStamp);
+
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                print(endTime.millisecondsSinceEpoch);
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.member)) {
+                                  newNodes.add(tmp.member);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.member)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              // this.indicators = getIndicator();
+                            });
+                            break;
+                          case "支出图表按一级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 1) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.mainType)) {
+                                    newNodes.add(tmp.mainType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.mainType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "支出图表按二级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 1) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.subType)) {
+                                    newNodes.add(tmp.subType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.subType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "收入图表按成员":
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 2) continue;
+                                print(tmp.createTimeStamp);
+
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                print(endTime.millisecondsSinceEpoch);
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.member)) {
+                                  newNodes.add(tmp.member);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.member)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              // this.indicators = getIndicator();
+                            });
+                            break;
+                          case "收入图表按一级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 2) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.mainType)) {
+                                    newNodes.add(tmp.mainType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.mainType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "收入图表按二级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 2) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.subType)) {
+                                    newNodes.add(tmp.subType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.subType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                        }
                       },
                     );
                   }),
@@ -254,6 +675,249 @@ class PiePageState extends State {
                               int.parse(str.split("-")[2]));
                         });
                         print(time);
+                        print(pieType);
+                        switch (pieType) {
+                          case "支出图表按成员":
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 1) continue;
+                                print(tmp.createTimeStamp);
+
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                print(endTime.millisecondsSinceEpoch);
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.member)) {
+                                  newNodes.add(tmp.member);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.member)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              // this.indicators = getIndicator();
+                            });
+                            break;
+                          case "支出图表按一级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 1) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.mainType)) {
+                                    newNodes.add(tmp.mainType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.mainType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "支出图表按二级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 1) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.subType)) {
+                                    newNodes.add(tmp.subType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.subType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "收入图表按成员":
+                            dbHelp
+                                .getAcount(
+                              startTime: 0,
+                              endTime: 1701125919708,
+                            )
+                                .then((value) {
+                              List newNodes = List();
+                              List newValues = List();
+                              var newSum = 0;
+                              print(value.length);
+                              for (int i = 0; i < value.length; i++) {
+                                // print(value[i]);
+                                Item tmp = Item.fromMap(value[i]);
+                                if (tmp.type != 2) continue;
+                                print(tmp.createTimeStamp);
+
+                                if (beginTime.millisecondsSinceEpoch >
+                                    tmp.createTimeStamp) continue;
+                                print(endTime.millisecondsSinceEpoch);
+                                if (endTime.millisecondsSinceEpoch <
+                                    tmp.createTimeStamp) continue;
+                                newSum += tmp.cost.toInt();
+                                if (!newNodes.contains(tmp.member)) {
+                                  newNodes.add(tmp.member);
+                                  newValues.add(tmp.cost);
+                                  continue;
+                                }
+                                newValues[newNodes.indexOf(tmp.member)] +=
+                                    tmp.cost;
+                              }
+                              print(newNodes);
+                              print(newValues);
+                              // print(newSum);
+                              nodes = newNodes;
+                              values = newValues;
+                              sum = newSum;
+                              // this.indicators = getIndicator();
+                            });
+                            break;
+                          case "收入图表按一级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 2) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.mainType)) {
+                                    newNodes.add(tmp.mainType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.mainType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                          case "收入图表按二级类别":
+                            {
+                              dbHelp
+                                  .getAcount(
+                                startTime: 0,
+                                endTime: 1701125919708,
+                              )
+                                  .then((value) {
+                                if (value == null) return;
+                                List newNodes = List();
+                                List newValues = List();
+                                var newSum = 0;
+                                print(value.length);
+                                for (int i = 0; i < value.length; i++) {
+                                  // print(value[i]);
+                                  Item tmp = Item.fromMap(value[i]);
+                                  if (tmp.type != 2) continue;
+                                  if (beginTime.millisecondsSinceEpoch >
+                                      tmp.createTimeStamp) continue;
+                                  if (endTime.millisecondsSinceEpoch <
+                                      tmp.createTimeStamp) continue;
+                                  newSum += tmp.cost.toInt();
+                                  if (!newNodes.contains(tmp.subType)) {
+                                    newNodes.add(tmp.subType);
+                                    newValues.add(tmp.cost);
+                                    continue;
+                                  }
+                                  newValues[newNodes.indexOf(tmp.subType)] +=
+                                      tmp.cost;
+                                }
+                                print(newNodes);
+                                print(newValues);
+                                // print(newSum);
+                                nodes = newNodes;
+                                values = newValues;
+                                sum = newSum;
+                                setState(() {});
+                              });
+                            }
+                            break;
+                        }
                       },
                     );
                   }),
@@ -264,60 +928,54 @@ class PiePageState extends State {
     ]);
   }
 
+  List<Padding> getIndicator() {
+    return List.generate(nodes.length, (index) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(colors[index]),
+              ),
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            Text(
+              nodes[index],
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: touchedIndex == index ? Colors.black : Colors.grey,
+              ),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
+    return List.generate(nodes.length, (index) {
+      final isTouched = index == touchedIndex;
       final double fontSize = isTouched ? 25 : 18;
       final double radius = isTouched ? 150 : 140;
+      var theTitle = " ";
 
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-              color: const Color(0xff0293ee),
-              value: 40,
-              title: '40%',
-              radius: radius,
-              titleStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xffffffff)),
-              titlePositionPercentageOffset: .60);
-        case 1:
-          return PieChartSectionData(
-              color: const Color(0xfff8b250),
-              value: 30,
-              title: '30%',
-              radius: radius,
-              titleStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xffffffff)),
-              titlePositionPercentageOffset: .60);
-        case 2:
-          return PieChartSectionData(
-              color: const Color(0xff845bef),
-              value: 16,
-              title: '16%',
-              radius: radius,
-              titleStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xffffffff)),
-              titlePositionPercentageOffset: .60);
-        case 3:
-          return PieChartSectionData(
-              color: const Color(0xff13d38e),
-              value: 15,
-              title: '15%',
-              radius: radius,
-              titleStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xffffffff)),
-              titlePositionPercentageOffset: .60);
-        default:
-          return null;
-      }
+      return PieChartSectionData(
+          color: Color(colors[index]),
+          value: double.parse(values[index].toString()),
+          title: theTitle,
+          radius: radius,
+          titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xffffffff)),
+          titlePositionPercentageOffset: .60);
     });
   }
 }

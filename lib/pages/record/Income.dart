@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
 
+import 'package:easyrecord/db/db_helper.dart';
+import 'package:easyrecord/models/bill_model.dart';
+
 class IncomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -14,15 +17,53 @@ class IncomePage extends StatefulWidget {
 }
 
 class _IncomePageState extends State<IncomePage> {
+  var _cost = new TextEditingController();
   var theType = "现金";
-  var theMainType = "餐饮";
+  var theMainType = "工职收入";
+  var theSubType = "工资";
   var theMember = "本人";
   var theTime = DateTime.now();
+  var dbHelper = Dbhelper();
+  List mainTypes = List();
+  List subTypes = List();
+  List accounts = List();
+  List members = List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelp.getIncomeCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!mainTypes.contains(map["mainType"]))
+          mainTypes.add(map["mainType"]);
+        if (map["mainType"] == theMainType) subTypes.add(map["subType"]);
+        print(theMainType);
+      }
+    });
+    dbHelp.getAccountCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!accounts.contains(map["account"])) accounts.add(map["account"]);
+      }
+    });
+    dbHelp.getMemberCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!members.contains(map["member"])) members.add(map["member"]);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
         SizedBox(
           height: 10,
@@ -30,6 +71,7 @@ class _IncomePageState extends State<IncomePage> {
         Padding(
           padding: EdgeInsets.all(20),
           child: TextField(
+            controller: _cost,
             decoration: InputDecoration(
                 icon: Icon(Icons.payment),
                 // labelText: '支出金额',
@@ -40,12 +82,10 @@ class _IncomePageState extends State<IncomePage> {
               fontSize: 40.0,
               // fontFamily:
             ),
-            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-            keyboardType: TextInputType.number,
           ),
         ),
         SizedBox(
-            height: 375.0, //设置高度
+            height: 465.0, //设置高度
             width: 350.0,
             child: new Card(
                 elevation: 15.0, //设置阴影
@@ -88,14 +128,46 @@ class _IncomePageState extends State<IncomePage> {
                           color: Colors.blue[500],
                         ),
                         title: Text(theMainType),
-                        subtitle: Text("收入类型"),
+                        subtitle: Text("选择一级分类"),
                         onTap: () {
                           JhPickerTool.showStringPicker(context,
-                              data: mainType, title: "请选择收入类型", normalIndex: 0,
+                              data: mainTypes, title: "请选择一级分类", normalIndex: 0,
                               clickCallBack: (var index, var str) {
                             print(index);
                             setState(() {
                               this.theMainType = str;
+                              subTypes = List();
+                              dbHelp.getIncomeCategory().then((list) {
+                                print(list.length);
+                                for (int i = 0; i < list.length; i++) {
+                                  Map map = list[i];
+                                  if (map["mainType"] == theMainType)
+                                    subTypes.add(map["subType"]);
+                                }
+                              });
+                            });
+                          });
+                        },
+                      ),
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                          size: 32.0,
+                          color: Colors.blue[500],
+                        ),
+                        title: Text(theSubType),
+                        subtitle: Text("选择二级分类"),
+                        onTap: () {
+                          JhPickerTool.showStringPicker(context,
+                              data: subTypes, title: "请选择二级分类", normalIndex: 0,
+                              clickCallBack: (var index, var str) {
+                            print(index);
+                            setState(() {
+                              this.theSubType = str;
                             });
                           });
                         },
@@ -172,6 +244,28 @@ class _IncomePageState extends State<IncomePage> {
               child: Text("保存"),
               onPressed: () {
                 print("已保存");
+                Item item = Item(
+                    id: null, //注意 插入新账单id需为null， 若传入id则此操作为更新表中对应id的账单
+                    cost: num.parse(_cost.text),
+                    mainType: theMainType,
+                    subType: theSubType,
+                    type: 2,
+                    account: theType,
+                    member: theMember,
+                    createTimeStamp: theTime.millisecondsSinceEpoch);
+                dbHelp.insertItem(item).then((value) => print(value));
+                // dbHelp
+                //     .getAcount(
+                //         startTime: 0, endTime: 1701125919708, member: '本人')
+                //     .then((value) {
+                //   print(value.length);
+                //   for (int i = 0; i < value.length; i++) {
+                //     Item tmp = Item.fromMap(value[i]);
+                //     print(tmp.id);
+                //     print(tmp.cost);
+                //     print(tmp.createTimeStamp);
+                //   }
+                // });
                 Navigator.pop(context);
               },
               color: Colors.blue,
@@ -186,7 +280,7 @@ class _IncomePageState extends State<IncomePage> {
           },
         )
       ],
-    );
+    ));
   }
 }
 

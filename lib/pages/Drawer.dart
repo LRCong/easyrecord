@@ -25,26 +25,6 @@ class MyDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: CircleAvatar(
-              child: Icon(Icons.cloud_upload),
-            ),
-            title: Text("数据备份"),
-            onTap: () {},
-          ),
-          Divider(
-            color: Colors.blueGrey,
-          ),
-          ListTile(
-            leading: CircleAvatar(
-              child: Icon(Icons.cloud_download),
-            ),
-            title: Text("数据恢复"),
-            onTap: () {},
-          ),
-          Divider(
-            color: Colors.blueGrey,
-          ),
-          ListTile(
-            leading: CircleAvatar(
               child: Icon(Icons.settings),
             ),
             title: Text("密码设置"),
@@ -57,7 +37,7 @@ class MyDrawer extends StatelessWidget {
             leading: CircleAvatar(
               child: Icon(Icons.account_box),
             ),
-            title: Text("账户管理"),
+            title: Text("用户信息"),
             onTap: () {},
           )
         ],

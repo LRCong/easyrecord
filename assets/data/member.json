@@ -1,0 +1,26 @@
+[
+    {
+        "member": "本人",
+        "sort": 0
+    },
+    {
+        "member": "家庭公用",
+        "sort": 1
+    },
+    {
+        "member": "老婆",
+        "sort": 2
+    },
+    {
+        "member": "老公",
+        "sort": 3
+    },
+    {
+        "member": "子女",
+        "sort": 4
+    },
+    {
+        "member": "父母",
+        "sort": 5
+    }
+]

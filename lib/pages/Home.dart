@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
         },
         child: Column(children: [
           SizedBox(
-              height: 250.0, //设置高度
+              height: 150.0, //设置高度
               child: new Card(
                 elevation: 15.0, //设置阴影
                 shape: const RoundedRectangleBorder(
@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  height: 200,
+                  height: 150,
                 ),
               )),
           SizedBox(

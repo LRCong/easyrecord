@@ -105,7 +105,7 @@ class PiePageState extends State {
         ]),
       ),
       SizedBox(
-        height: 210.0, //设置高度
+        height: 80.0, //设置高度
         child: new Card(
           elevation: 15.0, //设置阴影
           shape: const RoundedRectangleBorder(

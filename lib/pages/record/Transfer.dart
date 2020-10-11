@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TransferPage extends StatefulWidget {
   @override
@@ -18,10 +19,12 @@ class _TransferPageState extends State<TransferPage> {
   var theOutputType = "现金";
   var theMember = "本人";
   var theTime = DateTime.now();
+  var _cost = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
         SizedBox(
           height: 10,
@@ -39,8 +42,7 @@ class _TransferPageState extends State<TransferPage> {
               fontSize: 40.0,
               // fontFamily:
             ),
-            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-            keyboardType: TextInputType.number,
+            controller: _cost,
           ),
         ),
         SizedBox(
@@ -173,6 +175,30 @@ class _TransferPageState extends State<TransferPage> {
               child: Text("保存"),
               onPressed: () {
                 print("已保存");
+                try {
+                  num.parse(_cost.text);
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "请输入合法的金额",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue[400],
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  return;
+                }
+                if (_cost.text == "") {
+                  Fluttertoast.showToast(
+                      msg: "请输入合法的金额",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue[300],
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  return;
+                }
                 Navigator.pop(context);
               },
               color: Colors.blue,
@@ -187,7 +213,7 @@ class _TransferPageState extends State<TransferPage> {
           },
         )
       ],
-    );
+    ));
   }
 }
 

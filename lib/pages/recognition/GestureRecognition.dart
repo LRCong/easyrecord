@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:gesture_recognition/gesture_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'PwControllor.dart';
 
@@ -29,7 +30,7 @@ class _GesturePwRecognitionPage extends State<GesturePwRecognitionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("设置手势密码"), automaticallyImplyLeading: false),
+      appBar: AppBar(title: Text("输入手势密码"), automaticallyImplyLeading: false),
       body: WillPopScope(
         child: Container(
           child: Column(
@@ -77,15 +78,21 @@ class _GesturePwRecognitionPage extends State<GesturePwRecognitionPage> {
                   immediatelyClear: true,
                   size: MediaQuery.of(context).size.width - 50,
                   onPanUp: (List<int> items) {
-                    setState(() {
-                      result = items;
-                    });
                     setWhichPw(2);
                     print(_pw);
-                    if (result.toString() == _pw)
+                    if (result.toString() == _pw) {
                       Navigator.of(context).pop(true);
-                    else
+                    } else {
                       print("错误");
+                      Fluttertoast.showToast(
+                          msg: "请输入正确的密码",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.blue[300],
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
                   },
                 ),
               )

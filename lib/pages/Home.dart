@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'recognition/PwControllor.dart';
+import 'package:easyrecord/db/db_helper.dart';
+import 'package:easyrecord/models/bill_model.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -13,7 +15,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool check = false;
-  int _pay = 10;
+  int _dayPay = 0;
+  int _weekPay = 0;
+  int _monthPay = 0;
+  int _yearPay = 0;
+  int _dayGet = 0;
+  int _weekGet = 0;
+  int _monthGet = 0;
+  int _yearGet = 0;
   var _now = DateTime.now();
 
   @override
@@ -36,16 +45,111 @@ class _HomeState extends State<Home> {
         });
       }
     });
+    dbHelp
+        .getAcount(
+      startTime: 0,
+      endTime: 1701125919708,
+    )
+        .then((value) {
+      if (value == null) return;
+      var day = DateTime.now().day;
+      var month = DateTime.now().month;
+      var year = DateTime.now().year;
+      var newDay = 0;
+      var newWeek = 0;
+      var newMonth = 0;
+      var newYear = 0;
+      print(value.length);
+      for (int i = 0; i < value.length; i++) {
+        Item tmp = Item.fromMap(value[i]);
+        var tmpTime = DateTime.fromMillisecondsSinceEpoch(tmp.createTimeStamp);
+        if (tmpTime.year != year) continue;
+        newYear += tmp.cost;
+        if (tmpTime.month != month) continue;
+        newMonth += tmp.cost;
+        if (day - tmpTime.day < 7 &&
+            DateTime.now().weekday - tmpTime.weekday > 0)
+          newWeek += tmp.cost;
+        else
+          continue;
+        if (tmpTime.day != day) continue;
+        newDay += tmp.cost;
+      }
+      _dayPay = newDay;
+      _weekPay = newWeek;
+      _monthPay = newMonth;
+      _yearPay = newYear;
+      print(_dayPay);
+      setState(() {});
+    });
   }
 
   Widget build(BuildContext context) {
     return RefreshIndicator(
         onRefresh: () async {
-          setState(() {
-            _pay++;
+          dbHelp
+              .getAcount(
+            startTime: 0,
+            endTime: 1701125919708,
+          )
+              .then((value) {
+            if (value == null) return;
+            var day = DateTime.now().day;
+            var month = DateTime.now().month;
+            var year = DateTime.now().year;
+            var newDayPay = 0;
+            var newWeekPay = 0;
+            var newMonthPay = 0;
+            var newYearPay = 0;
+            var newDayGet = 0;
+            var newWeekGet = 0;
+            var newMonthGet = 0;
+            var newYearGet = 0;
+            print(value.length);
+            for (int i = 0; i < value.length; i++) {
+              Item tmp = Item.fromMap(value[i]);
+              if (tmp.type == 1) {
+                var tmpTime =
+                    DateTime.fromMillisecondsSinceEpoch(tmp.createTimeStamp);
+                if (tmpTime.year != year) continue;
+                newYearPay += tmp.cost.toInt();
+                if (tmpTime.month != month) continue;
+                newMonthPay += tmp.cost.toInt();
+                if (day - tmpTime.day < 7 &&
+                    DateTime.now().weekday - tmpTime.weekday >= 0)
+                  newWeekPay += tmp.cost.toInt();
+                else
+                  continue;
+                if (tmpTime.day != day) continue;
+                newDayPay += tmp.cost.toInt();
+              } else if (tmp.type == 2) {
+                var tmpTime =
+                    DateTime.fromMillisecondsSinceEpoch(tmp.createTimeStamp);
+                if (tmpTime.year != year) continue;
+                newYearGet += tmp.cost.toInt();
+                if (tmpTime.month != month) continue;
+                newMonthGet += tmp.cost.toInt();
+                if (day - tmpTime.day < 7 &&
+                    DateTime.now().weekday - tmpTime.weekday >= 0)
+                  newWeekGet += tmp.cost.toInt();
+                else
+                  continue;
+                if (tmpTime.day != day) continue;
+                newDayGet += tmp.cost.toInt();
+              }
+            }
+            _dayPay = newDayPay;
+            _weekPay = newWeekPay;
+            _monthPay = newMonthPay;
+            _yearPay = newYearPay;
+            _dayGet = newDayGet;
+            _weekGet = newWeekGet;
+            _monthGet = newMonthGet;
+            _yearGet = newYearGet;
+            setState(() {});
           });
         },
-        child: Column(children: [
+        child: ListView(children: [
           SizedBox(
               height: 150.0, //设置高度
               child: new Card(
@@ -86,21 +190,21 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                           ),
                           title: Text("今天"),
-                          subtitle: Text("消费${_pay}"),
+                          subtitle: Text("消费${_dayPay}"),
                           trailing: Column(
                             children: [
                               SizedBox(
                                 height: 10.0,
                               ),
                               Text(
-                                "收入0",
+                                "收入${_dayGet}",
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               SizedBox(
                                 height: 5.0,
                               ),
                               Text(
-                                "支出${_pay}",
+                                "支出${_dayPay}",
                                 style: TextStyle(color: Colors.blueGrey),
                               ),
                             ],
@@ -115,21 +219,21 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                           ),
                           title: Text("本周"),
-                          subtitle: Text("消费${_pay}"),
+                          subtitle: Text("消费${_weekPay}"),
                           trailing: Column(
                             children: [
                               SizedBox(
                                 height: 10.0,
                               ),
                               Text(
-                                "收入0",
+                                "收入${_weekGet}",
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               SizedBox(
                                 height: 5.0,
                               ),
                               Text(
-                                "支出${_pay}",
+                                "支出${_weekPay}",
                                 style: TextStyle(color: Colors.blueGrey),
                               ),
                             ],
@@ -144,21 +248,21 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                           ),
                           title: Text("本月"),
-                          subtitle: Text("消费${_pay}"),
+                          subtitle: Text("消费${_monthPay}"),
                           trailing: Column(
                             children: [
                               SizedBox(
                                 height: 10.0,
                               ),
                               Text(
-                                "收入0",
+                                "收入${_monthGet}",
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               SizedBox(
                                 height: 5.0,
                               ),
                               Text(
-                                "支出${_pay}",
+                                "支出${_monthPay}",
                                 style: TextStyle(color: Colors.blueGrey),
                               ),
                             ],
@@ -173,21 +277,21 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                           ),
                           title: Text("本年"),
-                          subtitle: Text("消费${_pay}"),
+                          subtitle: Text("消费${_yearPay}"),
                           trailing: Column(
                             children: [
                               SizedBox(
                                 height: 10.0,
                               ),
                               Text(
-                                "收入0",
+                                "收入${_yearGet}",
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               SizedBox(
                                 height: 5.0,
                               ),
                               Text(
-                                "支出${_pay}",
+                                "支出${_yearPay}",
                                 style: TextStyle(color: Colors.blueGrey),
                               ),
                             ],

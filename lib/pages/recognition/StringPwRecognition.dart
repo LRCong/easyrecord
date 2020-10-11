@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'PwControllor.dart';
 
 class StringPwRecognitionPage extends StatefulWidget {
@@ -86,14 +88,16 @@ class _StringPwRecognitionPageState extends State<StringPwRecognitionPage> {
                         child: Text("输入字符密码"),
                         onPressed: () {
                           if (_string == _stringPw.text) {
-                            print(_string);
-                            print(_stringPw.text);
                             Navigator.of(context).pop(true);
                           } else {
-                            print(_string);
-                            print(_stringPw.text);
-                            print("错误");
-                            setState(() {});
+                            Fluttertoast.showToast(
+                                msg: "请输入正确的密码",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.blue[300],
+                                textColor: Colors.white,
+                                fontSize: 16.0);
                           }
                         },
                         color: Colors.blue,

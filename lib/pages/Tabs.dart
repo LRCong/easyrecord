@@ -32,6 +32,7 @@ class _TabState extends State<Tabs> {
       bottomNavigationBar: BottomAppBar(
         color: Theme.of(context).accentColor,
         shape: CircularNotchedRectangle(),
+        elevation: 20.0,
         child: Padding(
           padding: EdgeInsets.fromLTRB(0, 6, 0, 6),
           child: Row(

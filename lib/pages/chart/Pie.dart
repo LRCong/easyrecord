@@ -28,39 +28,7 @@ class PiePageState extends State {
   void initState() {
     // TODO: implement initState
     super.initState();
-    dbHelp
-        .getAcount(
-      startTime: 0,
-      endTime: 1701125919708,
-    )
-        .then((value) {
-      if (value == null) return;
-      List newNodes = List();
-      List newValues = List();
-      var newSum = 0;
-      print(value.length);
-      for (int i = 0; i < value.length; i++) {
-        // print(value[i]);
-        Item tmp = Item.fromMap(value[i]);
-        if (tmp.type != 1) continue;
-        if (beginTime.millisecondsSinceEpoch > tmp.createTimeStamp) continue;
-        if (endTime.millisecondsSinceEpoch < tmp.createTimeStamp) continue;
-        newSum += tmp.cost.toInt();
-        if (!newNodes.contains(tmp.mainType)) {
-          newNodes.add(tmp.mainType);
-          newValues.add(tmp.cost);
-          continue;
-        }
-        newValues[newNodes.indexOf(tmp.mainType)] += tmp.cost;
-      }
-      print(newNodes);
-      print(newValues);
-      // print(newSum);
-      nodes = newNodes;
-      values = newValues;
-      sum = newSum;
-      setState(() {});
-    });
+    refreshState();
   }
 
   @override
@@ -127,7 +95,7 @@ class PiePageState extends State {
                         title: "请选择图表类型", clickCallBack: (int index, var str) {
                       print(index);
                       this.pieType = str;
-                      setNewState(pieType);
+                      refreshState();
                     });
                   }),
               new Divider(),
@@ -160,7 +128,7 @@ class PiePageState extends State {
                               int.parse(str.split("-")[2]));
                         });
                         print(time);
-                        setNewState(pieType);
+                        refreshState();
                       },
                     );
                   }),
@@ -194,7 +162,7 @@ class PiePageState extends State {
                         });
                         print(time);
                         print(pieType);
-                        setNewState(pieType);
+                        refreshState();
                       },
                     );
                   }),
@@ -205,58 +173,7 @@ class PiePageState extends State {
     ]);
   }
 
-  List<Padding> getIndicator() {
-    return List.generate(nodes.length, (index) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-        child: Column(
-          children: <Widget>[
-            Container(
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(colors[index]),
-              ),
-            ),
-            const SizedBox(
-              width: 4,
-            ),
-            Text(
-              nodes[index],
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: touchedIndex == index ? Colors.black : Colors.grey,
-              ),
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  List<PieChartSectionData> showingSections() {
-    return List.generate(nodes.length, (index) {
-      final isTouched = index == touchedIndex;
-      final double fontSize = isTouched ? 25 : 18;
-      final double radius = isTouched ? 150 : 140;
-      var theTitle = " ";
-
-      return PieChartSectionData(
-          color: Color(colors[index]),
-          value: double.parse(values[index].toString()),
-          title: theTitle,
-          radius: radius,
-          titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff)),
-          titlePositionPercentageOffset: .60);
-    });
-  }
-
-  void setNewState(var pieType) {
+  refreshState() {
     switch (pieType) {
       case "支出图表按成员":
         dbHelp
@@ -281,7 +198,6 @@ class PiePageState extends State {
             if (endTime.millisecondsSinceEpoch < tmp.createTimeStamp) continue;
             newSum += tmp.cost.toInt();
             if (!newNodes.contains(tmp.member)) {
-              print("哈哈");
               newNodes.add(tmp.member);
               newValues.add(tmp.cost);
               continue;
@@ -492,6 +408,57 @@ class PiePageState extends State {
         }
         break;
     }
+  }
+
+  List<Padding> getIndicator() {
+    return List.generate(nodes.length, (index) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(colors[index]),
+              ),
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            Text(
+              nodes[index],
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: touchedIndex == index ? Colors.black : Colors.grey,
+              ),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  List<PieChartSectionData> showingSections() {
+    return List.generate(nodes.length, (index) {
+      final isTouched = index == touchedIndex;
+      final double fontSize = isTouched ? 25 : 18;
+      final double radius = isTouched ? 150 : 140;
+      var theTitle = " ";
+
+      return PieChartSectionData(
+          color: Color(colors[index]),
+          value: double.parse(values[index].toString()),
+          title: theTitle,
+          radius: radius,
+          titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xffffffff)),
+          titlePositionPercentageOffset: .60);
+    });
   }
 }
 

@@ -79,7 +79,7 @@ packages:
     source: hosted
     version: "1.0.9"
   equatable:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: equatable
       url: "https://pub.flutter-io.cn"
@@ -220,7 +220,7 @@ packages:
     source: hosted
     version: "1.8.0-nullsafety.1"
   path_drawing:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_drawing
       url: "https://pub.flutter-io.cn"

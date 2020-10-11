@@ -247,10 +247,7 @@ class LinePageState extends State {
       return BarChartGroupData(
         x: index,
         barRods: [
-          BarChartRodData(
-            y: values[index]
-                .toDouble(), /*colors: [Colors.lightBlueAccent, Colors.greenAccent]*/
-          )
+          BarChartRodData(y: values[index].toDouble(), color: Colors.blueAccent)
         ],
         showingTooltipIndicators: [0],
       );

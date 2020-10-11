@@ -63,7 +63,9 @@ class Dbhelper {
       type INTEGER DEFAULT(1),
       account TEXT,
       member TEXT,
-      createTimeStamp INTEGER
+      createTimeStamp INTEGER,
+      inAccount TEXT,
+      outAccount TEXT
     )
     """;
     await db.execute(queryBill);

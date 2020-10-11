@@ -43,6 +43,7 @@ class _TabState extends State<Tabs> {
                 onTap: () {
                   setState(() {
                     onTap(0);
+                    Navigator.pushNamed(context, "/Analysis");
                   });
                 },
                 child: Column(

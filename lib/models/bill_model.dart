@@ -10,6 +10,8 @@ final String columnMember = "member";
 final String columnCreateTimeStamp = 'createTimeStamp';
 
 final String columnsort = 'sort';
+final String columnInAccount = 'inAccount';
+final String columnoutAccount = 'outAccount';
 
 //账户
 class Item {
@@ -17,10 +19,12 @@ class Item {
   num cost; //金额
   String mainType; //一级类型
   String subType; //二级类型
-  int type; //{1:"收入",2:"支出"3:"转入",4:"转出",}
+  int type; //{1:"支出",2:"收入"3:"转入",4:"转出",}
   String account; //账户
   String member; //成员
   int createTimeStamp; //创建的时间戳
+  String inAccount; //转入账户
+  String outAccount; //转出账户
 
   Item(
       {this.id,
@@ -30,7 +34,9 @@ class Item {
       this.type,
       this.account,
       this.member,
-      this.createTimeStamp});
+      this.createTimeStamp,
+      this.inAccount,
+      this.outAccount});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
@@ -40,7 +46,9 @@ class Item {
       columnType: type,
       columnAccount: account,
       columnMember: member,
-      columnCreateTimeStamp: createTimeStamp
+      columnCreateTimeStamp: createTimeStamp,
+      columnInAccount: inAccount,
+      columnoutAccount: outAccount
     };
     if (id != null) {
       map[columnId] = id;
@@ -57,6 +65,8 @@ class Item {
     account = map[columnAccount];
     member = map[columnMember];
     createTimeStamp = map[columnCreateTimeStamp];
+    inAccount = map[columnInAccount];
+    outAccount = map[columnoutAccount];
   }
 }
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../record/jh_picker_tool.dart';
+import '../../db/db_helper.dart';
+import '../../models/bill_model.dart';
+import 'package:date_format/date_format.dart';
+
 class AnalysisPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -8,36 +11,52 @@ class AnalysisPage extends StatefulWidget {
   }
 }
 
+enum timeTypes { year, quarter, month, week, day, hour }
+enum categoryTypes { main, sub }
+enum moreTypes { member, merchant }
+enum selectedTypes { time, category, account, project, more }
+
 class _AnalysisPageState extends State<StatefulWidget> {
-  @override
-  int _enableType = 0;       //0:时间，1：分类， 2：账户， 3：项目， 4：更多
-  String time = '月';
-  String category = '一级分类';
-  String more = '成员';
+  selectedTypes _enableType = selectedTypes.time; //时间，分类， 账户， 项目， 更多
+  timeTypes time = timeTypes.month;
+  categoryTypes category = categoryTypes.main;
+  moreTypes more = moreTypes.member;
 
-
-
-  final FirstCatogory = ['【食】品', '【学】习', '【娱】乐'];
-  final secondCatogory = ["食堂", '书籍', '玩具'];
-  final money = [15, 25, 100];
-  final testTime = ["17:15", '20:19', '22:20'];
-  final account = ["微信",'现金','支付宝'];
-  final _Font = const TextStyle(fontSize: 18.0);
+  var itemList = <Item>[];
 
   Widget build(BuildContext context) {
+    // itemList.clear();
+    dbHelp
+        .getAcount(
+      startTime: 0,
+      endTime: 1701125919708,
+    )
+        .then((value) {
+      if (value == null) return;
+      print(value.length);
+      for (int i = 0; i < value.length; i++) {
+        Item tmp = Item.fromMap(value[i]);
+        print(tmp.id);
+        print(tmp.cost);
+        print(tmp.createTimeStamp);
+        itemList.add(tmp);
+        print("get itemList as $itemList");
+      }
+    });
+
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('您的记账记录如下')
-      ),
+      appBar: new AppBar(title: new Text('您的记账记录如下')),
       // body: _buildListResult(),
       body: new ListView.builder(
-        itemCount: money.length,
-        itemBuilder: (context, index){
+        itemCount: itemList.length,
+        itemBuilder: (context, index) {
           return new ListTile(
             leading: new Icon(Icons.done_all),
-            title: new Text("${secondCatogory[index]}"),
-            subtitle: new Text('${testTime[index]}·${account[index]}'),
-            trailing: new Text("${money[index]}"),
+            title: new Text("${itemList[index].subType}"),
+            subtitle: new Text(
+                '${formatDate(DateTime.fromMillisecondsSinceEpoch(itemList[index].createTimeStamp),
+                    [ hh, ':', mm])}'),
+            trailing: new Text("${itemList[index].cost}"),
           );
         },
       ),
@@ -45,131 +64,138 @@ class _AnalysisPageState extends State<StatefulWidget> {
         color: Colors.white,
         child: Row(
           children: <Widget>[
-            Expanded(
-              // setstate()
-              child: FlatButton(
-                onPressed: (){
-                    JhPickerTool.showStringPicker(context,
-                        data: timeTypes,
-                        normalIndex: 0,
-                        title: "请选择时间范围",
-                        clickCallBack: (int index, var str) {
-                        setState(() {
-                          print(index);
-                          _enableType = 0;
-                          time = str;
-                          print("time select is $time");
-                          // refreshState();
-                        });
-                      });
-
-                },
-                child: new Text('时间', style: TextStyle(
-                  color:_enableType==0?Colors.yellow[800]:Colors.black,
-                )
-                  ),
-              ),
-            ),
-            FlatButton(
-              onPressed: (){
-                JhPickerTool.showStringPicker(context,
-                    data: categoryTypes,
-                    normalIndex: 0,
-                    title: "请选择分类", clickCallBack: (int index, var str) {
-                      setState(() {
-                        print(index);
-                        _enableType = 1;
-                        category = str;
-                        print("time select is $category");
-                      });
-                      // refreshState();
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: new PopupMenuButton<timeTypes>(
+                  onSelected: (timeTypes result) {
+                    setState(() {
+                      _enableType = selectedTypes.time;
+                      time = result;
                     });
-              },
-              child: new Text('分类', style: TextStyle(
-                color:_enableType==1?Colors.yellow[800]:Colors.black,
-              )),
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<timeTypes>>[
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.year,
+                          child: Text('年'),
+                        ),
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.quarter,
+                          child: Text('季'),
+                        ),
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.month,
+                          child: Text('月'),
+                        ),
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.week,
+                          child: Text('周'),
+                        ),
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.day,
+                          child: Text('天'),
+                        ),
+                        const PopupMenuItem<timeTypes>(
+                          value: timeTypes.hour,
+                          child: Text('时'),
+                        ),
+                      ],
+                  child: new Text(
+                    '时间',
+                    style: TextStyle(
+                      color: _enableType == selectedTypes.time
+                          ? Colors.yellow[800]
+                          : Colors.black,
+                    ),
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: new PopupMenuButton<categoryTypes>(
+                  onSelected: (categoryTypes result) {
+                    setState(() {
+                      _enableType = selectedTypes.category;
+                      category = result;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<categoryTypes>>[
+                        const PopupMenuItem<categoryTypes>(
+                          value: categoryTypes.main,
+                          child: Text('一级分类'),
+                        ),
+                        const PopupMenuItem<categoryTypes>(
+                          value: categoryTypes.sub,
+                          child: Text('二级分类'),
+                        ),
+                      ],
+                  child: new Text(
+                    '分类',
+                    style: TextStyle(
+                      color: _enableType == selectedTypes.category
+                          ? Colors.yellow[800]
+                          : Colors.black,
+                    ),
+                  )),
             ),
             FlatButton(
-              onPressed: (){
+              onPressed: () {
                 setState(() {
-                  _enableType = 2;
+                  _enableType = selectedTypes.account;
                 });
               },
-              child: new Text('账户', style: TextStyle(
-                color:_enableType==2?Colors.yellow[800]:Colors.black,
-              )),
+              child: new Text('账户',
+                  style: TextStyle(
+                    color: _enableType == selectedTypes.account
+                        ? Colors.yellow[800]
+                        : Colors.black,
+                  )),
             ),
             FlatButton(
-              onPressed: (){
+              onPressed: () {
                 setState(() {
-                  _enableType = 3;
+                  _enableType = selectedTypes.project;
                 });
-
               },
-              child: new Text('项目', style: TextStyle(
-                color:_enableType==3?Colors.yellow[800]:Colors.black,
-              )),
+              child: new Text('项目',
+                  style: TextStyle(
+                    color: _enableType == selectedTypes.project
+                        ? Colors.yellow[800]
+                        : Colors.black,
+                  )),
             ),
-            FlatButton(
-              onPressed: (){
-                JhPickerTool.showStringPicker(context,
-                    data: moreTypes,
-                    normalIndex: 0,
-                    title: "请选择更多筛选条件", clickCallBack: (int index, var str) {
-                      setState(() {
-                        print(index);
-                        _enableType = 4;
-                        more = str;
-                        print("time select is $more");
-                        // refreshState();
-                      });
+            Container(
+              padding: EdgeInsets.all(20),
+              child: new PopupMenuButton<moreTypes>(
+                  onSelected: (moreTypes result) {
+                    setState(() {
+                      _enableType = selectedTypes.more;
+                      more = result;
                     });
-              },
-              child: new Text('更多', style: TextStyle(
-                color:_enableType==4?Colors.yellow[800]:Colors.black,
-              )),
-            ),
+                  },
+                  itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<moreTypes>>[
+                    const PopupMenuItem<moreTypes>(
+                      value: moreTypes.member,
+                      child: Text('成员'),
+                    ),
+                    const PopupMenuItem<moreTypes>(
+                      value: moreTypes.merchant,
+                      child: Text('商家'),
+                    ),
+                  ],
+                  child: new Text(
+                    '更多',
+                    style: TextStyle(
+                      color: _enableType == selectedTypes.more
+                          ? Colors.yellow[800]
+                          : Colors.black,
+                    ),
+                  )),
+            )
           ],
-
         ),
       ),
     );
   }
-
-  // Widget _buildListResult() {
-  //   return new ListView.builder(
-  //       padding: const EdgeInsets.all(16.0),
-  //       itemBuilder: (context, i) {
-  //         if (i.isOdd) return new Divider();
-  //         return _buildRow(_listResult[i~/2]);
-  //       });
-  // }
-  //
-  // Widget _buildRow(int res) {
-  //   return new ListTile(
-  //     title: new Text(
-  //       res.toString(),
-  //       style: _Font,
-  //     ),
-  //   );
-  // }
 }
-
-var timeTypes = [
-  "年",
-  "季",
-  "月",
-  "周",
-  "天",
-  "时",
-];
-
-var categoryTypes = [
-  "一级分类",
-  "二级分类",
-];
-
-var moreTypes = [
-  "成员",
-  "商家",
-];

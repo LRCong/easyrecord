@@ -11,16 +11,13 @@ class AnalysisPage extends StatefulWidget {
   }
 }
 
-enum timeTypes { year, quarter, month, week, day, hour }
-enum categoryTypes { main, sub }
-enum moreTypes { member, merchant }
-enum selectedTypes { time, category, account, project, more }
+enum selectedTypes { none, time, category, account, project, more }
 
 class _AnalysisPageState extends State<StatefulWidget> {
   selectedTypes _enableType = selectedTypes.time; //时间，分类， 账户， 项目， 更多
-  timeTypes time = timeTypes.month;
-  categoryTypes category = categoryTypes.main;
-  moreTypes more = moreTypes.member;
+  String time = '月';
+  String category = '一级分类';
+  String more = '成员';
 
   var itemList = <Item>[];
 
@@ -66,42 +63,43 @@ class _AnalysisPageState extends State<StatefulWidget> {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(20.0),
-              child: new PopupMenuButton<timeTypes>(
-                  onSelected: (timeTypes result) {
+              child: new PopupMenuButton<String>(
+                  onSelected: (String result) {
                     setState(() {
                       _enableType = selectedTypes.time;
                       time = result;
                     });
                   },
+                  initialValue: '月',
                   itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<timeTypes>>[
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.year,
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: '年',
                           child: Text('年'),
                         ),
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.quarter,
+                        const PopupMenuItem<String>(
+                          value: '季',
                           child: Text('季'),
                         ),
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.month,
+                        const PopupMenuItem<String>(
+                          value: '月',
                           child: Text('月'),
                         ),
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.week,
+                        const PopupMenuItem<String>(
+                          value: '周',
                           child: Text('周'),
                         ),
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.day,
+                        const PopupMenuItem<String>(
+                          value: '天',
                           child: Text('天'),
                         ),
-                        const PopupMenuItem<timeTypes>(
-                          value: timeTypes.hour,
+                        const PopupMenuItem<String>(
+                          value: '时',
                           child: Text('时'),
                         ),
                       ],
                   child: new Text(
-                    '时间',
+                    _enableType == selectedTypes.time?time:'时间',
                     style: TextStyle(
                       color: _enableType == selectedTypes.time
                           ? Colors.yellow[800]
@@ -111,26 +109,26 @@ class _AnalysisPageState extends State<StatefulWidget> {
             ),
             Container(
               padding: EdgeInsets.all(20.0),
-              child: new PopupMenuButton<categoryTypes>(
-                  onSelected: (categoryTypes result) {
+              child: new PopupMenuButton<String>(
+                  onSelected: (String result) {
                     setState(() {
                       _enableType = selectedTypes.category;
                       category = result;
                     });
                   },
                   itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<categoryTypes>>[
-                        const PopupMenuItem<categoryTypes>(
-                          value: categoryTypes.main,
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: '一级分类',
                           child: Text('一级分类'),
                         ),
-                        const PopupMenuItem<categoryTypes>(
-                          value: categoryTypes.sub,
+                        const PopupMenuItem<String>(
+                          value: '二级分类',
                           child: Text('二级分类'),
                         ),
                       ],
                   child: new Text(
-                    '分类',
+                    _enableType == selectedTypes.category?category:'分类',
                     style: TextStyle(
                       color: _enableType == selectedTypes.category
                           ? Colors.yellow[800]
@@ -166,26 +164,26 @@ class _AnalysisPageState extends State<StatefulWidget> {
             ),
             Container(
               padding: EdgeInsets.all(20),
-              child: new PopupMenuButton<moreTypes>(
-                  onSelected: (moreTypes result) {
+              child: new PopupMenuButton<String>(
+                  onSelected: (String result) {
                     setState(() {
                       _enableType = selectedTypes.more;
                       more = result;
                     });
                   },
                   itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<moreTypes>>[
-                    const PopupMenuItem<moreTypes>(
-                      value: moreTypes.member,
+                  <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: '成员',
                       child: Text('成员'),
                     ),
-                    const PopupMenuItem<moreTypes>(
-                      value: moreTypes.merchant,
+                    const PopupMenuItem<String>(
+                      value: '商家',
                       child: Text('商家'),
                     ),
                   ],
                   child: new Text(
-                    '更多',
+                    _enableType == selectedTypes.more?more:'更多',
                     style: TextStyle(
                       color: _enableType == selectedTypes.more
                           ? Colors.yellow[800]

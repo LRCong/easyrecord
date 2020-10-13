@@ -1,3 +1,4 @@
+import 'package:easyrecord/pages/Analysis/AnalysisBar.dart';
 import 'package:easyrecord/pages/recognition/FingerPwRecognition.dart';
 
 import '../pages/Tabs.dart';
@@ -23,4 +24,5 @@ final routes = {
   "/Record": (context) => RecordPage(),
   "/RecordSetting": (context) => RecordSettingPage(),
   "/Chart": (context) => ChartBarPage(),
+  "/Analysis": (context) => AnalysisPage(),
 };

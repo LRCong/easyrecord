@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:easyrecord/db/db_helper.dart';
 import 'package:easyrecord/models/bill_model.dart';
@@ -134,17 +135,17 @@ class _IncomePageState extends State<IncomePage> {
                               data: mainTypes, title: "请选择一级分类", normalIndex: 0,
                               clickCallBack: (var index, var str) {
                             print(index);
-                            setState(() {
-                              this.theMainType = str;
-                              subTypes = List();
-                              dbHelp.getIncomeCategory().then((list) {
-                                print(list.length);
-                                for (int i = 0; i < list.length; i++) {
-                                  Map map = list[i];
-                                  if (map["mainType"] == theMainType)
-                                    subTypes.add(map["subType"]);
-                                }
-                              });
+                            this.theMainType = str;
+                            subTypes = List();
+                            dbHelp.getIncomeCategory().then((list) {
+                              print(list.length);
+                              for (int i = 0; i < list.length; i++) {
+                                Map map = list[i];
+                                if (map["mainType"] == theMainType)
+                                  subTypes.add(map["subType"]);
+                              }
+                              this.theSubType = this.subTypes[0];
+                              setState(() {});
                             });
                           });
                         },
@@ -244,6 +245,30 @@ class _IncomePageState extends State<IncomePage> {
               child: Text("保存"),
               onPressed: () {
                 print("已保存");
+                try {
+                  num.parse(_cost.text);
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "请输入合法的金额",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue[400],
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  return;
+                }
+                if (_cost.text == "") {
+                  Fluttertoast.showToast(
+                      msg: "请输入合法的金额",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue[300],
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  return;
+                }
                 Item item = Item(
                     id: null, //注意 插入新账单id需为null， 若传入id则此操作为更新表中对应id的账单
                     cost: num.parse(_cost.text),

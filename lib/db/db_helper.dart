@@ -45,7 +45,7 @@ class Dbhelper {
     debugPrint(path);
 
     // Delete the database
-    // await deleteDatabase(path);
+    //await deleteDatabase(path);
     var db = await openDatabase(path, version: 3, onCreate: _onCreate);
     return db;
   }
@@ -238,6 +238,55 @@ class Dbhelper {
     return result;
   }
 
+  /*
+   insertCategory调用示例：
+          dbHelp
+              .insertCategory("收入", "cg！", "yyds!")
+              .then((value) => print(value));
+
+          dbHelp
+              .insertCategory("支出", "yyds!", "cg!")
+              .then((value) => print(value));
+  */
+  //type 为“收入”时添加收入类别， 为“支出”时添加支出类别
+  Future<int> insertCategory(
+      String type, String mainType, String subType) async {
+    var dbClient = await db; //
+
+    //var map = item.toMap();
+
+    var result;
+    /*print(map['cost']);
+    print(map['member']);*/
+    try {
+      if (type == "收入") {
+        var sortIncome = Sqflite.firstIntValue(await dbClient
+                .rawQuery('SELECT COUNT(*) FROM $_incomeCategory')) +
+            1;
+        var map = {
+          "mainType": mainType,
+          "subType": subType,
+          "sort": sortIncome
+        };
+        sortIncome++;
+        result = await dbClient.insert(_incomeCategory, map);
+      } else if (type == "支出") {
+        var sortOutcome = Sqflite.firstIntValue(await dbClient
+                .rawQuery('SELECT COUNT(*) FROM $_outcomeCategory')) +
+            1;
+        var map = {
+          "mainType": mainType,
+          "subType": subType,
+          "sort": sortOutcome
+        };
+        result = await dbClient.insert(_outcomeCategory, map);
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return result;
+  }
+
   /// 查询账单
   /*
     传参： 见下面的注释
@@ -306,6 +355,18 @@ class Dbhelper {
       return list;
     } else {
       return null;
+    }
+  }
+
+//调用示例：
+//dbHelp.deleteAccount(1); 删除id为1的账单
+  void deleteAccount(int id) async {
+    var dbClient = await db; //
+
+    await dbClient.rawDelete('DELETE FROM $_billTableName WHERE id = ?', [id]);
+
+    try {} catch (e) {
+      debugPrint(e.toString());
     }
   }
 }

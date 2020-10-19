@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'jh_picker_tool.dart';
+import 'package:easyrecord/db/db_helper.dart';
 
 class AddSubTypePage extends StatefulWidget {
   @override
@@ -13,7 +13,24 @@ class AddSubTypePage extends StatefulWidget {
 }
 
 class _AddSubTypePageState extends State<AddSubTypePage> {
+  var theType = "支出";
   var theMainType = "餐饮";
+  List mainTypes = List();
+  var newSubType = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelp.getOutcomeCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!mainTypes.contains(map["mainType"]))
+          mainTypes.add(map["mainType"]);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +53,11 @@ class _AddSubTypePageState extends State<AddSubTypePage> {
               fontSize: 40.0,
               // fontFamily:
             ),
+            controller: newSubType,
           ),
         ),
         SizedBox(
-            height: 100.0, //设置高度
+            height: 200.0, //设置高度
             width: 350.0,
             child: new Card(
               elevation: 15.0, //设置阴影
@@ -55,11 +73,59 @@ class _AddSubTypePageState extends State<AddSubTypePage> {
                         size: 32.0,
                         color: Colors.blue[500],
                       ),
+                      title: Text(theType),
+                      subtitle: Text("类别"),
+                      onTap: () {
+                        JhPickerTool.showStringPicker(context,
+                            data: types,
+                            normalIndex: 0,
+                            title: "请选类别", clickCallBack: (int index, var str) {
+                          print(index);
+                          setState(() {
+                            this.theType = str;
+                            mainTypes = List();
+                            if (index == 0) {
+                              dbHelp.getOutcomeCategory().then((list) {
+                                print(list.length);
+                                for (int i = 0; i < list.length; i++) {
+                                  Map map = list[i];
+                                  if (!mainTypes.contains(map["mainType"]))
+                                    mainTypes.add(map["mainType"]);
+                                }
+                                theMainType = mainTypes[0];
+                                setState(() {});
+                              });
+                            } else {
+                              dbHelp.getIncomeCategory().then((list) {
+                                print(list.length);
+                                for (int i = 0; i < list.length; i++) {
+                                  Map map = list[i];
+                                  if (!mainTypes.contains(map["mainType"]))
+                                    mainTypes.add(map["mainType"]);
+                                }
+                                theMainType = mainTypes[0];
+                                setState(() {});
+                              });
+                            }
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.account_balance_wallet,
+                        size: 32.0,
+                        color: Colors.blue[500],
+                      ),
                       title: Text(theMainType),
                       subtitle: Text("一级分类"),
                       onTap: () {
                         JhPickerTool.showStringPicker(context,
-                            data: mainType, normalIndex: 0, title: "请选择一级分类",
+                            data: mainTypes, normalIndex: 0, title: "请选择一级分类",
                             clickCallBack: (int index, var str) {
                           print(index);
                           setState(() {
@@ -83,6 +149,7 @@ class _AddSubTypePageState extends State<AddSubTypePage> {
             child: MaterialButton(
               child: Text("保存"),
               onPressed: () {
+                dbHelp.insertCategory(theType, theMainType, newSubType.text);
                 print("已保存");
                 Navigator.pop(context);
               },
@@ -96,9 +163,4 @@ class _AddSubTypePageState extends State<AddSubTypePage> {
   }
 }
 
-const accountType = ["现金账户", "信用账户", "金融账户", "投资账户", "虚拟账户"];
-
-var mainType = [
-  "餐饮",
-  "交通",
-];
+const types = ['支出', '收入'];

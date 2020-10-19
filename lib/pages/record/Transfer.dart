@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'jh_picker_tool.dart';
 import 'package:date_format/date_format.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:easyrecord/db/db_helper.dart';
+import 'package:easyrecord/models/bill_model.dart';
 
 class TransferPage extends StatefulWidget {
   @override
@@ -20,6 +22,29 @@ class _TransferPageState extends State<TransferPage> {
   var theMember = "本人";
   var theTime = DateTime.now();
   var _cost = TextEditingController();
+  List accounts = List();
+  List members = List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelp.getAccountCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!accounts.contains(map["account"])) accounts.add(map["account"]);
+      }
+    });
+    dbHelp.getMemberCategory().then((list) {
+      print(list.length);
+      for (int i = 0; i < list.length; i++) {
+        Map map = list[i];
+        if (!members.contains(map["member"])) members.add(map["member"]);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -67,13 +92,11 @@ class _TransferPageState extends State<TransferPage> {
                         subtitle: Text("转入账户"),
                         onTap: () {
                           JhPickerTool.showStringPicker(context,
-                              data: accountType,
-                              normalIndex: 0,
-                              title: "请选择账户类型",
+                              data: accounts, normalIndex: 0, title: "请选择账户类型",
                               clickCallBack: (int index, var str) {
                             print(index);
                             setState(() {
-                              this.theInputType = str;
+                              this.theOutputType = str;
                             });
                           });
                         },
@@ -92,13 +115,11 @@ class _TransferPageState extends State<TransferPage> {
                         subtitle: Text("转出账户"),
                         onTap: () {
                           JhPickerTool.showStringPicker(context,
-                              data: accountType,
-                              normalIndex: 0,
-                              title: "请选择账户类型",
+                              data: accounts, normalIndex: 0, title: "请选择账户类型",
                               clickCallBack: (int index, var str) {
                             print(index);
                             setState(() {
-                              this.theOutputType = str;
+                              this.theInputType = str;
                             });
                           });
                         },
@@ -117,7 +138,7 @@ class _TransferPageState extends State<TransferPage> {
                         subtitle: Text("选择成员"),
                         onTap: () {
                           JhPickerTool.showStringPicker(context,
-                              data: member, title: "请选择成员", normalIndex: 0,
+                              data: members, title: "请选择成员", normalIndex: 0,
                               clickCallBack: (var index, var str) {
                             print(index);
                             setState(() {
@@ -199,6 +220,33 @@ class _TransferPageState extends State<TransferPage> {
                       fontSize: 16.0);
                   return;
                 }
+                // print(theInputType);
+                // print(theOutputType);
+                // print(theMember);
+                // print(theTime);
+                Item item = Item(
+                    id: null, //注意 插入新账单id需为null， 若传入id则此操作为更新表中对应id的账单
+                    cost: num.parse(_cost.text),
+                    type: 3,
+                    mainType: "无",
+                    subType: "无",
+                    account: "无",
+                    inAccount: theInputType,
+                    outAccount: theOutputType,
+                    member: theMember,
+                    createTimeStamp: theTime.millisecondsSinceEpoch);
+                dbHelp.insertItem(item).then((value) => print(value));
+                dbHelp
+                    .getAcount(startTime: 0, endTime: 1701125919708)
+                    .then((value) {
+                  print(value.length);
+                  for (int i = 0; i < value.length; i++) {
+                    Item tmp = Item.fromMap(value[i]);
+                    print(tmp.id);
+                    print(tmp.cost);
+                    print(tmp.createTimeStamp);
+                  }
+                });
                 Navigator.pop(context);
               },
               color: Colors.blue,
@@ -216,15 +264,3 @@ class _TransferPageState extends State<TransferPage> {
     ));
   }
 }
-
-const accountType = ["现金", "信用卡", "银行卡", "基金", "虚拟账户"];
-
-var mainType = [
-  ["餐饮", "交通"],
-];
-
-var subType = [
-  ["三餐", "蔬果"],
-];
-
-var member = ["本人", "配偶", "子女", "父母", "家庭公用"];

@@ -1,4 +1,5 @@
 import 'package:easyrecord/pages/Analysis/AnalysisBar.dart';
+import 'package:easyrecord/pages/Analysis/EditItem.dart';
 import 'package:easyrecord/pages/recognition/FingerPwRecognition.dart';
 
 import '../pages/Tabs.dart';
@@ -25,4 +26,5 @@ final routes = {
   "/RecordSetting": (context) => RecordSettingPage(),
   "/Chart": (context) => ChartBarPage(),
   "/Analysis": (context) => AnalysisPage(),
+  "/Edit": (context) => EditItemPage(),
 };

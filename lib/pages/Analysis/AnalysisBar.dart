@@ -17,6 +17,8 @@ class SumItem {
   }
 }
 
+enum selectedTypes { none, time, category, account, member }
+
 class AnalysisPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -24,8 +26,6 @@ class AnalysisPage extends StatefulWidget {
     return _AnalysisPageState();
   }
 }
-
-enum selectedTypes { none, time, category, account, member }
 
 class _AnalysisPageState extends State<StatefulWidget> {
   selectedTypes _selectedType; //时间，分类， 账户， 成员
@@ -44,8 +44,8 @@ class _AnalysisPageState extends State<StatefulWidget> {
   //   super.initState();
   //   _selectedType = selectedTypes.time;
   //   _time = '月';
-  //   getItemList();
-  //   getSumList();
+  //   // getItemList();
+  //   // getSumList();
   // }
 
   void getItemList() {
@@ -56,6 +56,7 @@ class _AnalysisPageState extends State<StatefulWidget> {
       endTime: 1701125919708,
     )
         .then((value) {
+      if (value == null) return;
       for (int i = 0; i < value.length; i++) {
         Item tmp = Item.fromMap(value[i]);
         _itemList.add(tmp);
@@ -66,7 +67,7 @@ class _AnalysisPageState extends State<StatefulWidget> {
         var date = DateFormat('yyyy-MM-dd')
             .format(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp));
         print(
-            "$i item is: ${item.cost},  $date, ${item.mainType}, ${item.subType}, ${item.member}");
+            "$i item is: ${item.cost},  $date, ${item.mainType}, ${item.subType}, ${item.member}, type ${item.type}");
       }
       _itemList.sort((a, b) => a.createTimeStamp.compareTo(b.createTimeStamp));
       print("Sorted _itemList is: ");
@@ -276,6 +277,7 @@ class _AnalysisPageState extends State<StatefulWidget> {
     getSumList();
   }
 
+
   @override
   Widget build(BuildContext context) {
     // debugPaintSizeEnabled = true; //显示边界布局然后自动import即可
@@ -292,8 +294,7 @@ class _AnalysisPageState extends State<StatefulWidget> {
               //TODO: 添加具体时间下拉块
               initiallyExpanded: i == 0 ? true : false,
               leading: getLeadingText(i),
-              title:
-              new Row(
+              title: new Row(
                 children: [
                   Container(
                     width: 40,
@@ -307,7 +308,8 @@ class _AnalysisPageState extends State<StatefulWidget> {
                             text: TextSpan(
                                 text: (_sum[i].income - _sum[i].outcome)
                                     .toStringAsFixed(2),
-                                style: TextStyle(fontSize: 30, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.black),
                                 children: <TextSpan>[
                                   TextSpan(
                                       text: "  结余",
@@ -337,26 +339,36 @@ class _AnalysisPageState extends State<StatefulWidget> {
                         ),
                       ]),
                 ],
-
               ),
               children: <Widget>[
                 new ListView.builder(
                     shrinkWrap: true,
                     itemCount: _sum[i].list.length,
                     itemBuilder: (context, j) {
-                      return new ListTile(
-                        leading: Icon(
-                          Icons.done,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: new Text("${_sum[i].list[j].subType}"),
-                        subtitle: new Text(
-                            '${formatDate(DateTime.fromMillisecondsSinceEpoch(_sum[i].list[j].createTimeStamp), [
-                          hh,
-                          ':',
-                          mm
-                        ])} · ${_sum[i].list[j].account}'),
-                        trailing: new Text("${_sum[i].list[j].cost}"),
+                      Item item = _sum[i].list[j];
+                      return new InkWell(
+                        onTap: (){
+                          print("you pressed the list");
+                          Navigator.pushNamed(context, "/Edit");
+                        },
+                        child:ListTile(
+                          leading: Icon(
+                              item.type <= 2
+                                  ? Icons.done
+                                  : Icons.account_balance_wallet,
+                              color: Theme.of(context).primaryColor),
+                          title: new Text(item.type <= 2
+                              ? "${item.subType}"
+                              : "${item.outAccount} -> ${item.inAccount}"),
+                          subtitle: new Text(
+                              '${formatDate(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp), [
+                                hh,
+                                ':',
+                                mm
+                              ])}' +
+                                  (item.type <= 2 ? ' · ${item.account}' : '')),
+                          trailing: new Text("${item.cost}"),
+                        )
                       );
                     }),
               ],

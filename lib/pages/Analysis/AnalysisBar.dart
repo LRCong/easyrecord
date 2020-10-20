@@ -283,7 +283,23 @@ class _AnalysisPageState extends State<StatefulWidget> {
     // debugPaintSizeEnabled = true; //显示边界布局然后自动import即可
     getItemList();
     return new Scaffold(
-      appBar: new AppBar(title: new Text('${endTime.year}年')),
+      appBar: new AppBar(
+          title: new Text('选择条件，筛选流水'),
+          actions:<Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, "/Record");
+                getItemList();
+                getSumList();
+              },
+
+            )
+          ]
+      ),
       //TODO :添加年份选择，添加新建选项
       body: new ListView.separated(
           itemCount: _sum.length,
@@ -349,7 +365,11 @@ class _AnalysisPageState extends State<StatefulWidget> {
                       return new InkWell(
                         onTap: (){
                           print("you pressed the list");
-                          Navigator.pushNamed(context, "/Edit");
+                          setState(() {
+                            Navigator.pushNamed(context, "/Edit", arguments: item);
+                            getItemList();
+                            getSumList();
+                          });
                         },
                         child:ListTile(
                           leading: Icon(
@@ -362,10 +382,8 @@ class _AnalysisPageState extends State<StatefulWidget> {
                               : "${item.outAccount} -> ${item.inAccount}"),
                           subtitle: new Text(
                               '${formatDate(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp), [
-                                hh,
-                                ':',
-                                mm
-                              ])}' +
+                                yyyy, '-', mm, '-', dd, '-', hh, ':', mm]
+                              )}' +
                                   (item.type <= 2 ? ' · ${item.account}' : '')),
                           trailing: new Text("${item.cost}"),
                         )

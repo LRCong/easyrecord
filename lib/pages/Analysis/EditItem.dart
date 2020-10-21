@@ -1,4 +1,9 @@
+import 'package:easyrecord/models/bill_model.dart';
 import 'package:flutter/material.dart';
+import 'EditIncome.dart';
+import 'EditPay.dart';
+import 'package:easyrecord/pages/record/Income.dart';
+import 'package:easyrecord/pages/record/Transfer.dart';
 
 class EditItemPage extends StatefulWidget {
 
@@ -10,27 +15,29 @@ class EditItemPage extends StatefulWidget {
 }
 
 class _EditItemState extends State<StatefulWidget>{
-  int _pressedTimes = 0;
+  Item _item;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    _item = ModalRoute.of(context).settings.arguments;
     return new Scaffold(
-      appBar: AppBar(
-        title: Text("修改记录"),
-      ),
-        body:Center(
-          child: InkWell(
-            onTap: (){
-              setState(() {
-                _pressedTimes++;
-                if(_pressedTimes > 5)
-                  Navigator.pop(context);
-              });
-            },
-            child: Text("你按下我了$_pressedTimes次"),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            iconSize: 20.0,
+            onPressed: () => Navigator.pop(context),
           ),
-        )
-    );
+          title: Text(
+            "编辑"+
+                (_item.type==1?'支出':(_item.type==2?"收入":'转账')),
+            style: TextStyle(fontSize: 18),
+          ),
+          centerTitle: true,
+          // toolbarHeight: 80.0,
+        ),
+        body: (_item.type==1?EditPayPage(_item):(_item.type==2?EditIncomePage(_item):TransferPage())),
+        );
   }
 
 }

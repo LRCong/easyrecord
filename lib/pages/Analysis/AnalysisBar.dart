@@ -25,6 +25,8 @@ class AnalysisPage extends StatefulWidget {
     // TODO: implement createState
     return _AnalysisPageState();
   }
+
+
 }
 
 class _AnalysisPageState extends State<StatefulWidget> {
@@ -35,6 +37,17 @@ class _AnalysisPageState extends State<StatefulWidget> {
   List<SumItem> _sum = [];
   TextStyle bigFont = TextStyle(fontSize: 25);
   TextStyle smallFont = TextStyle(fontSize: 20);
+  TextStyle outcomeStyle = TextStyle(fontSize:20, color: Colors.green);
+  TextStyle incomeStyle = TextStyle(fontSize:20, color: Colors.red);
+  TextStyle transferStyle = TextStyle(fontSize:20, color: Colors.grey);
+
+  _AnalysisPageState(){
+    print('初始化');
+    _selectedType = selectedTypes.time;
+    _time = '月';
+    // getItemList();
+
+  }
 
   // TODO: 本年度记录，需要添加按钮切换年份
   final endTime = DateTime.now();
@@ -47,6 +60,274 @@ class _AnalysisPageState extends State<StatefulWidget> {
   //   // getItemList();
   //   // getSumList();
   // }
+
+
+  @override
+  Widget build(BuildContext context) {
+    // debugPaintSizeEnabled = true; //显示边界布局然后自动import即可
+
+    getItemList();
+    // getSumList();
+    print('执行build');
+    return new Scaffold(
+      appBar: new AppBar(
+          title: new Text('选择条件，筛选流水'),
+          actions:<Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() {
+                  Navigator.pushNamed(context, "/Record");
+                });
+              },
+
+            )
+          ]
+      ),
+      // TODO :添加年份选择，添加新建选项
+      body: new ListView.separated(
+          itemCount: _sum.length,
+          separatorBuilder: (BuildContext context, int index) =>
+          const Divider(),
+          itemBuilder: (context, i) {
+            return new ExpansionTile(
+              //TODO: 添加具体时间下拉块
+              initiallyExpanded: i == 0 ? true : false,
+              leading: getLeadingText(i),
+              title: new Row(
+                children: [
+                  Container(
+                    width: 40,
+                  ),
+                  new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        new Container(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: new RichText(
+                            text: TextSpan(
+                                text: (_sum[i].income - _sum[i].outcome)
+                                    .toStringAsFixed(2),
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.black),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: "  结余",
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.grey))
+                                ]),
+                          ),
+                        ),
+                        new RichText(
+                          text: TextSpan(
+                              text: "收入  ",
+                              style: TextStyle(color: Colors.red),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: _sum[i].income.toStringAsFixed(2),
+                                    style: TextStyle(color: Colors.grey)),
+                                TextSpan(
+                                    text: "  |  ",
+                                    style: TextStyle(color: Colors.grey)),
+                                TextSpan(
+                                    text: "支出    ",
+                                    style: TextStyle(color: Colors.green)),
+                                TextSpan(
+                                    text: _sum[i].outcome.toStringAsFixed(2),
+                                    style: TextStyle(color: Colors.grey))
+                              ]),
+                        ),
+                      ]),
+                ],
+              ),
+              children: <Widget>[
+                new ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _sum[i].list.length,
+                    itemBuilder: (context, j) {
+                      Item item = _sum[i].list[j];
+                      return new InkWell(
+                          onTap: (){
+                            print("编辑流水条目");
+                            setState(() {
+                              Navigator.pushNamed(context, "/Edit", arguments: item);
+                              // getItemList();
+                              // getSumList();
+                            });
+                          },
+                          child:ListTile(
+                            leading: Icon(
+                                item.type <= 2
+                                    ? Icons.done
+                                    : Icons.account_balance_wallet,
+                                color: Theme.of(context).primaryColor),
+                            title: new Text(item.type <= 2
+                                ? "${item.subType}"
+                                : "${item.outAccount} -> ${item.inAccount}"),
+                            subtitle: new Text(
+                                '${formatDate(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp), [
+                                  yyyy, '-', mm, '-', dd, '-', hh, ':', mm]
+                                )}' +
+                                    (item.type <= 2 ? ' · ${item.account}' : '')),
+                            trailing: new Text(
+                                "${item.cost}",
+                              style: item.type==1?outcomeStyle:(item.type==2?incomeStyle:transferStyle),
+                            ),
+                          )
+                      );
+                    }),
+              ],
+            );
+          }),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.only(left: 30),
+                child: new PopupMenuButton<String>(
+                    onSelected: (String value) {
+                      setState(() {
+                        PressButton(selectedTypes.time, value);
+                      });
+                    },
+                    initialValue:
+                    _selectedType == selectedTypes.time ? _time : '',
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: '年',
+                        child: Center(child: Text('年')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '季',
+                        child: Center(child: Text('季')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '月',
+                        child: Center(child: Text('月')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '周',
+                        child: Center(child: Text('周')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '天',
+                        child: Center(child: Text('天')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '时',
+                        child: Center(child: Text('时')),
+                      ),
+                    ],
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          _selectedType == selectedTypes.time ? _time : '时间',
+                          style: TextStyle(
+                            color: _selectedType == selectedTypes.time
+                                ? Colors.yellow[800]
+                                : Colors.black,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_up,
+                          color: _selectedType == selectedTypes.time
+                              ? Colors.yellow[800]
+                              : Colors.black,
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                child: new PopupMenuButton<String>(
+                    onSelected: (String result) {
+                      setState(() {
+                        PressButton(selectedTypes.category, result);
+                      });
+                    },
+                    initialValue: _selectedType == selectedTypes.category
+                        ? _category
+                        : '',
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: '一级分类',
+                        child: Center(child: Text('一级分类')),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '二级分类',
+                        child: Center(child: Text('二级分类')),
+                      ),
+                    ],
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          _selectedType == selectedTypes.category
+                              ? _category
+                              : '分类',
+                          style: TextStyle(
+                            color: _selectedType == selectedTypes.category
+                                ? Colors.yellow[800]
+                                : Colors.black,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_up,
+                          color: _selectedType == selectedTypes.category
+                              ? Colors.yellow[800]
+                              : Colors.black,
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: FlatButton(
+                onPressed: () {
+                  setState(() {
+                    PressButton(selectedTypes.account, null);
+                  });
+                },
+                child: new Text('账户',
+                    style: TextStyle(
+                      color: _selectedType == selectedTypes.account
+                          ? Colors.yellow[800]
+                          : Colors.black,
+                    )),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: FlatButton(
+                onPressed: () {
+                  setState(() {
+                    PressButton(selectedTypes.member, null);
+                  });
+                },
+                child: new Text('成员',
+                    style: TextStyle(
+                      color: _selectedType == selectedTypes.member
+                          ? Colors.yellow[800]
+                          : Colors.black,
+                    )),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   void getItemList() {
     _itemList.clear();
@@ -61,22 +342,23 @@ class _AnalysisPageState extends State<StatefulWidget> {
         Item tmp = Item.fromMap(value[i]);
         _itemList.add(tmp);
       }
-      print("\n\nNot Sorted _itemList is: ");
-      for (int i = 0; i < _itemList.length; ++i) {
-        Item item = _itemList[i];
-        var date = DateFormat('yyyy-MM-dd')
-            .format(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp));
-        print(
-            "$i item is: ${item.cost},  $date, ${item.mainType}, ${item.subType}, ${item.member}, type ${item.type}");
-      }
+      // print("\n\nNot Sorted _itemList is: ");
+      // for (int i = 0; i < _itemList.length; ++i) {
+      //   Item item = _itemList[i];
+      //   var date = DateFormat('yyyy-MM-dd')
+      //       .format(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp));
+      //   print("$i item:id-${item.id} ${item.cost},  $date, ${item.mainType}, "
+      //       "${item.subType}, ${item.member}, type ${item.type}");
+      // }
       _itemList.sort((a, b) => a.createTimeStamp.compareTo(b.createTimeStamp));
-      print("Sorted _itemList is: ");
+      print("按照时间排序的账单如下：");
       for (int i = 0; i < _itemList.length; ++i) {
         Item item = _itemList[i];
         var date = DateFormat('yyyy-MM-dd')
             .format(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp));
-        print(
-            "$i item is: ${item.cost},  $date, ${item.mainType}, ${item.subType}, ${item.member}");
+        print("id:${item.id} ${item.cost},  $date, ${item.mainType}, "
+            "${item.subType}, ${item.member}, type ${item.type}");
+        // getSumList();
       }
     });
   }
@@ -160,11 +442,11 @@ class _AnalysisPageState extends State<StatefulWidget> {
     } else {
       fun = ParseString;
     }
-    print("Start to compute sumList");
+    print("为得到sum，开始处理itemList");
     var res = Map();
     for (Item item in _itemList) {
       var key = fun(item);
-      print("key is $key");
+      // print("key is $key");
       if (res[key] == null) {
         SumItem tmp = new SumItem();
         res[key] = tmp;
@@ -266,258 +548,16 @@ class _AnalysisPageState extends State<StatefulWidget> {
     );
   }
 
-  void PressButton(button, choose) {
-    _selectedType = button;
-    if (button == selectedTypes.time) {
-      _time = choose;
-    } else if (button == selectedTypes.category) {
-      _category = choose;
+    void PressButton(button, choose) {
+      print("按下分类筛选按钮");
+      _selectedType = button;
+      if (button == selectedTypes.time) {
+        _time = choose;
+      } else if (button == selectedTypes.category) {
+        _category = choose;
+      }
+      // if (_itemList.length == 0) getItemList();
+      getSumList();
     }
-    if (_itemList.length == 0) getItemList();
-    getSumList();
-  }
 
-
-  @override
-  Widget build(BuildContext context) {
-    // debugPaintSizeEnabled = true; //显示边界布局然后自动import即可
-    getItemList();
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('${endTime.year}年')),
-      //TODO :添加年份选择，添加新建选项
-      body: new ListView.separated(
-          itemCount: _sum.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
-          itemBuilder: (context, i) {
-            return new ExpansionTile(
-              //TODO: 添加具体时间下拉块
-              initiallyExpanded: i == 0 ? true : false,
-              leading: getLeadingText(i),
-              title: new Row(
-                children: [
-                  Container(
-                    width: 40,
-                  ),
-                  new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        new Container(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: new RichText(
-                            text: TextSpan(
-                                text: (_sum[i].income - _sum[i].outcome)
-                                    .toStringAsFixed(2),
-                                style: TextStyle(
-                                    fontSize: 30, color: Colors.black),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: "  结余",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.grey))
-                                ]),
-                          ),
-                        ),
-                        new RichText(
-                          text: TextSpan(
-                              text: "收入  ",
-                              style: TextStyle(color: Colors.red),
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: _sum[i].income.toStringAsFixed(2),
-                                    style: TextStyle(color: Colors.grey)),
-                                TextSpan(
-                                    text: "  |  ",
-                                    style: TextStyle(color: Colors.grey)),
-                                TextSpan(
-                                    text: "支出    ",
-                                    style: TextStyle(color: Colors.green)),
-                                TextSpan(
-                                    text: _sum[i].outcome.toStringAsFixed(2),
-                                    style: TextStyle(color: Colors.grey))
-                              ]),
-                        ),
-                      ]),
-                ],
-              ),
-              children: <Widget>[
-                new ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _sum[i].list.length,
-                    itemBuilder: (context, j) {
-                      Item item = _sum[i].list[j];
-                      return new InkWell(
-                        onTap: (){
-                          print("you pressed the list");
-                          Navigator.pushNamed(context, "/Edit");
-                        },
-                        child:ListTile(
-                          leading: Icon(
-                              item.type <= 2
-                                  ? Icons.done
-                                  : Icons.account_balance_wallet,
-                              color: Theme.of(context).primaryColor),
-                          title: new Text(item.type <= 2
-                              ? "${item.subType}"
-                              : "${item.outAccount} -> ${item.inAccount}"),
-                          subtitle: new Text(
-                              '${formatDate(DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp), [
-                                hh,
-                                ':',
-                                mm
-                              ])}' +
-                                  (item.type <= 2 ? ' · ${item.account}' : '')),
-                          trailing: new Text("${item.cost}"),
-                        )
-                      );
-                    }),
-              ],
-            );
-          }),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.only(left: 30),
-                child: new PopupMenuButton<String>(
-                    onSelected: (String value) {
-                      setState(() {
-                        PressButton(selectedTypes.time, value);
-                      });
-                    },
-                    initialValue:
-                        _selectedType == selectedTypes.time ? _time : '',
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: '年',
-                            child: Center(child: Text('年')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '季',
-                            child: Center(child: Text('季')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '月',
-                            child: Center(child: Text('月')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '周',
-                            child: Center(child: Text('周')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '天',
-                            child: Center(child: Text('天')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '时',
-                            child: Center(child: Text('时')),
-                          ),
-                        ],
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          _selectedType == selectedTypes.time ? _time : '时间',
-                          style: TextStyle(
-                            color: _selectedType == selectedTypes.time
-                                ? Colors.yellow[800]
-                                : Colors.black,
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_up,
-                          color: _selectedType == selectedTypes.time
-                              ? Colors.yellow[800]
-                              : Colors.black,
-                        ),
-                      ],
-                    )),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: new PopupMenuButton<String>(
-                    onSelected: (String result) {
-                      setState(() {
-                        PressButton(selectedTypes.category, result);
-                      });
-                    },
-                    initialValue: _selectedType == selectedTypes.category
-                        ? _category
-                        : '',
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: '一级分类',
-                            child: Center(child: Text('一级分类')),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: '二级分类',
-                            child: Center(child: Text('二级分类')),
-                          ),
-                        ],
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          _selectedType == selectedTypes.category
-                              ? _category
-                              : '分类',
-                          style: TextStyle(
-                            color: _selectedType == selectedTypes.category
-                                ? Colors.yellow[800]
-                                : Colors.black,
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_up,
-                          color: _selectedType == selectedTypes.category
-                              ? Colors.yellow[800]
-                              : Colors.black,
-                        ),
-                      ],
-                    )),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: FlatButton(
-                onPressed: () {
-                  setState(() {
-                    PressButton(selectedTypes.account, null);
-                  });
-                },
-                child: new Text('账户',
-                    style: TextStyle(
-                      color: _selectedType == selectedTypes.account
-                          ? Colors.yellow[800]
-                          : Colors.black,
-                    )),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: FlatButton(
-                onPressed: () {
-                  setState(() {
-                    PressButton(selectedTypes.member, null);
-                  });
-                },
-                child: new Text('成员',
-                    style: TextStyle(
-                      color: _selectedType == selectedTypes.member
-                          ? Colors.yellow[800]
-                          : Colors.black,
-                    )),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }

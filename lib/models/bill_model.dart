@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final String columnId = '_id';
+final String columnId = 'id';
 final String columnCost = 'cost';
 final String columnMainType = 'mainType';
 final String columnSubType = 'subType';

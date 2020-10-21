@@ -10,7 +10,8 @@ import 'package:easyrecord/models/bill_model.dart';
 
 class EditPayPage extends StatefulWidget {
   final Item item;
-  EditPayPage(Item item):item = item;
+
+  EditPayPage(Item item) : item = item;
 
   @override
   State<StatefulWidget> createState() {
@@ -21,8 +22,8 @@ class EditPayPage extends StatefulWidget {
 
 class _EditPayPageState extends State<EditPayPage> {
   final Item item;
-  _EditPayPageState(this.item);
 
+  _EditPayPageState(this.item);
 
   var _cost;
   var theType;
@@ -30,6 +31,7 @@ class _EditPayPageState extends State<EditPayPage> {
   var theSubType;
   var theMember;
   var theTime;
+
   // var _cost = new TextEditingController();
   // var theType = "现金";
   // var theMainType = "餐饮";
@@ -48,12 +50,13 @@ class _EditPayPageState extends State<EditPayPage> {
     super.initState();
 
     _cost = new TextEditingController.fromValue(
-        TextEditingValue(text:item.cost.toString()));
+        TextEditingValue(text: item.cost.toString()));
     theType = item.account;
     theMainType = item.mainType;
     theSubType = item.subType;
     theMember = item.member;
     theTime = DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp);
+    print('当前修改的item id 为 ${item.id}');
 
     dbHelp.getOutcomeCategory().then((list) {
       print(list.length);
@@ -112,7 +115,7 @@ class _EditPayPageState extends State<EditPayPage> {
                   elevation: 15.0, //设置阴影
                   shape: const RoundedRectangleBorder(
                       borderRadius:
-                      BorderRadius.all(Radius.circular(14.0))), //设置圆角
+                          BorderRadius.all(Radius.circular(14.0))), //设置圆角
                   child: new Column(children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -128,11 +131,11 @@ class _EditPayPageState extends State<EditPayPage> {
                           JhPickerTool.showStringPicker(context,
                               data: accounts, normalIndex: 0, title: "请选择账户类型",
                               clickCallBack: (int index, var str) {
-                                print(index);
-                                setState(() {
-                                  this.theType = str;
-                                });
-                              });
+                            print(index);
+                            setState(() {
+                              this.theType = str;
+                            });
+                          });
                         },
                       ),
                     ),
@@ -151,21 +154,21 @@ class _EditPayPageState extends State<EditPayPage> {
                           JhPickerTool.showStringPicker(context,
                               data: mainTypes, title: "请选择一级分类", normalIndex: 0,
                               clickCallBack: (var index, var str) {
-                                print(index);
+                            print(index);
 
-                                this.theMainType = str;
-                                subTypes = List();
-                                dbHelp.getOutcomeCategory().then((list) {
-                                  print(list.length);
-                                  for (int i = 0; i < list.length; i++) {
-                                    Map map = list[i];
-                                    if (map["mainType"] == theMainType)
-                                      subTypes.add(map["subType"]);
-                                  }
-                                  this.theSubType = this.subTypes[0];
-                                  setState(() {});
-                                });
-                              });
+                            this.theMainType = str;
+                            subTypes = List();
+                            dbHelp.getOutcomeCategory().then((list) {
+                              print(list.length);
+                              for (int i = 0; i < list.length; i++) {
+                                Map map = list[i];
+                                if (map["mainType"] == theMainType)
+                                  subTypes.add(map["subType"]);
+                              }
+                              this.theSubType = this.subTypes[0];
+                              setState(() {});
+                            });
+                          });
                         },
                       ),
                     ),
@@ -184,11 +187,11 @@ class _EditPayPageState extends State<EditPayPage> {
                           JhPickerTool.showStringPicker(context,
                               data: subTypes, title: "请选择二级分类", normalIndex: 0,
                               clickCallBack: (var index, var str) {
-                                print(index);
-                                setState(() {
-                                  this.theSubType = str;
-                                });
-                              });
+                            print(index);
+                            setState(() {
+                              this.theSubType = str;
+                            });
+                          });
                         },
                       ),
                     ),
@@ -207,11 +210,11 @@ class _EditPayPageState extends State<EditPayPage> {
                           JhPickerTool.showStringPicker(context,
                               data: members, title: "请选择成员", normalIndex: 0,
                               clickCallBack: (var index, var str) {
-                                print(index);
-                                setState(() {
-                                  this.theMember = str;
-                                });
-                              });
+                            print(index);
+                            setState(() {
+                              this.theMember = str;
+                            });
+                          });
                         },
                       ),
                     ),
@@ -238,14 +241,14 @@ class _EditPayPageState extends State<EditPayPage> {
 //            maxValue: DateTime(2023,10,10),
 //            value: DateTime(2020,10,10),
                               clickCallback: (var str, var time) {
-                                setState(() {
-                                  this.theTime = DateTime(
-                                      int.parse(str.split("-")[0]),
-                                      int.parse(str.split("-")[1]),
-                                      int.parse(str.split("-")[2]));
-                                });
-                                print(time);
-                              });
+                            setState(() {
+                              this.theTime = DateTime(
+                                  int.parse(str.split("-")[0]),
+                                  int.parse(str.split("-")[1]),
+                                  int.parse(str.split("-")[2]));
+                            });
+                            print(time);
+                          });
                         },
                       ),
                     ),
@@ -254,60 +257,101 @@ class _EditPayPageState extends State<EditPayPage> {
             height: 10.0,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-            child: Container(
-              width: double.infinity,
-              height: 40,
-              child: MaterialButton(
-                child: Text("保存"),
-                onPressed: () {
-                  try {
-                    num.parse(_cost.text);
-                  } catch (e) {
-                    Fluttertoast.showToast(
-                        msg: "请输入合法的金额",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue[400],
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                    return;
-                  }
-                  if (_cost.text == "") {
-                    Fluttertoast.showToast(
-                        msg: "请输入合法的金额",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue[300],
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                    return;
-                  }
-                  // print(num.parse(_cost.text));
-                  // print(theType);
-                  // print(theMainType);
-                  // print(theSubType);
-                  // print(theMember);
-                  // print(theTime.millisecondsSinceEpoch);
-                  Item updateItem = Item(
-                      id: item.id, //注意 插入新账单id需为null， 若传入id则此操作为更新表中对应id的账单
-                      cost: num.parse(_cost.text),
-                      mainType: theMainType,
-                      subType: theSubType,
-                      type: 1,
-                      account: theType,
-                      member: theMember,
-                      createTimeStamp: theTime.millisecondsSinceEpoch);
-                  dbHelp.insertItem(updateItem).then((value) => print(value));
-                  Navigator.pop(context);
-                },
-                color: Colors.blue,
-                textColor: Colors.white,
-              ),
-            ),
-          ),
+              padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                      flex: 3,
+                      // width: 200,
+                      // height: 40,
+                      child: new Card(
+                        color: Colors.blue,
+                        elevation: 15.0, //设置阴影
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(14.0))), //设置圆角
+                        child: MaterialButton(
+                          child: Text("保存"),
+                          onPressed: () {
+                            try {
+                              num.parse(_cost.text);
+                            } catch (e) {
+                              Fluttertoast.showToast(
+                                  msg: "请输入合法的金额",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.blue[400],
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              return;
+                            }
+                            if (_cost.text == "") {
+                              Fluttertoast.showToast(
+                                  msg: "请输入合法的金额",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.blue[300],
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              return;
+                            }
+                            // print(num.parse(_cost.text));
+                            // print(theType);
+                            // print(theMainType);
+                            // print(theSubType);
+                            // print(theMember);
+                            // print(theTime.millisecondsSinceEpoch);
+                            Item updateItem = Item(
+                                id: item.id,
+                                //注意 插入新账单id需为null， 若传入id则此操作为更新表中对应id的账单
+                                cost: num.parse(_cost.text),
+                                mainType: theMainType,
+                                subType: theSubType,
+                                type: 1,
+                                account: theType,
+                                member: theMember,
+                                createTimeStamp:
+                                    theTime.millisecondsSinceEpoch);
+                            dbHelp
+                                .insertItem(updateItem)
+                                .then((value) => print(value));
+                            Navigator.pop(context);
+                          },
+                          textColor: Colors.white,
+                        ),
+                      )),
+                  Spacer(
+                    flex: 1,
+                  ),
+                  Expanded(
+                      flex: 3,
+                      child: new Card(
+                        elevation: 15.0, //设置阴影
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(14.0))),
+                        // child: Container(
+                        // padding: EdgeInsets.only(left: 20),
+                        // width: 200,
+                        // height: 40,
+                        color: Colors.red,
+                        child: MaterialButton(
+                          textColor: Colors.white,
+                          child: Text('删除'),
+                          onPressed: () {
+                            setState(() {
+                              dbHelper.deleteAccount(item.id);
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        // ),
+                      ))
+                ],
+              )),
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {

@@ -1,5 +1,6 @@
 import 'package:easyrecord/models/bill_model.dart';
 import 'package:flutter/material.dart';
+import 'EditIncome.dart';
 import 'EditPay.dart';
 import 'package:easyrecord/pages/record/Income.dart';
 import 'package:easyrecord/pages/record/Transfer.dart';
@@ -35,7 +36,7 @@ class _EditItemState extends State<StatefulWidget>{
           centerTitle: true,
           // toolbarHeight: 80.0,
         ),
-        body: (_item.type==1?EditPayPage(_item):(_item.type==2?IncomePage():TransferPage())),
+        body: (_item.type==1?EditPayPage(_item):(_item.type==2?EditIncomePage(_item):TransferPage())),
         );
   }
 

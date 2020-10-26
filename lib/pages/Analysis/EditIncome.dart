@@ -45,7 +45,8 @@ class _EditIncomePageState extends State<EditIncomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
+
     _cost = new TextEditingController.fromValue(
         TextEditingValue(text: item.cost.toString()));
     theType = item.account;
@@ -54,7 +55,7 @@ class _EditIncomePageState extends State<EditIncomePage> {
     theMember = item.member;
     theTime = DateTime.fromMillisecondsSinceEpoch(item.createTimeStamp);
 
-    super.initState();
+
     dbHelp.getIncomeCategory().then((list) {
       print(list.length);
       for (int i = 0; i < list.length; i++) {
@@ -352,7 +353,6 @@ class _EditIncomePageState extends State<EditIncomePage> {
                           // ),
                         )
                     )
-
                   ],
                 )),
             IconButton(

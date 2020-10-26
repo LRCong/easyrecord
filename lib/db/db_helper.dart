@@ -260,9 +260,8 @@ class Dbhelper {
     print(map['member']);*/
     try {
       if (type == "收入") {
-        var sortIncome = Sqflite.firstIntValue(await dbClient
-                .rawQuery('SELECT COUNT(*) FROM $_incomeCategory')) +
-            1;
+        var sortIncome = Sqflite.firstIntValue(
+            await dbClient.rawQuery('SELECT COUNT(*) FROM $_incomeCategory'));
         var map = {
           "mainType": mainType,
           "subType": subType,
@@ -271,9 +270,8 @@ class Dbhelper {
         sortIncome++;
         result = await dbClient.insert(_incomeCategory, map);
       } else if (type == "支出") {
-        var sortOutcome = Sqflite.firstIntValue(await dbClient
-                .rawQuery('SELECT COUNT(*) FROM $_outcomeCategory')) +
-            1;
+        var sortOutcome = Sqflite.firstIntValue(
+            await dbClient.rawQuery('SELECT COUNT(*) FROM $_outcomeCategory'));
         var map = {
           "mainType": mainType,
           "subType": subType,
@@ -281,6 +279,36 @@ class Dbhelper {
         };
         result = await dbClient.insert(_outcomeCategory, map);
       }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return result;
+  }
+
+  //插入自定义成员
+  Future<int> insertMember(String member) async {
+    var dbClient = await db; //
+    var result;
+    try {
+      var sortMember = Sqflite.firstIntValue(
+          await dbClient.rawQuery('SELECT COUNT(*) FROM $_memberCategory'));
+      var map = {"member": member, "sort": sortMember};
+      result = await dbClient.insert(_memberCategory, map);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return result;
+  }
+
+  //插入自定义账户
+  Future<int> insertAccount(String account) async {
+    var dbClient = await db; //
+    var result;
+    try {
+      var sortAccount = Sqflite.firstIntValue(
+          await dbClient.rawQuery('SELECT COUNT(*) FROM $_accountCategory'));
+      var map = {"account": account, "sort": sortAccount};
+      result = await dbClient.insert(_accountCategory, map);
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import 'package:easyrecord/db/db_helper.dart';
 
 class AddMember extends StatefulWidget {
   @override
@@ -11,6 +12,8 @@ class AddMember extends StatefulWidget {
 }
 
 class _AddMemberPageState extends State<AddMember> {
+  var newMember = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -32,6 +35,7 @@ class _AddMemberPageState extends State<AddMember> {
               fontSize: 40.0,
               // fontFamily:
             ),
+            controller: newMember,
           ),
         ),
         Padding(
@@ -42,6 +46,7 @@ class _AddMemberPageState extends State<AddMember> {
             child: MaterialButton(
               child: Text("保存"),
               onPressed: () {
+                dbHelp.insertMember(newMember.text);
                 print("已保存");
                 Navigator.pop(context);
               },

@@ -79,11 +79,13 @@ class _GesturePwRecognitionPage extends State<GesturePwRecognitionPage> {
                   size: MediaQuery.of(context).size.width - 50,
                   onPanUp: (List<int> items) {
                     setWhichPw(2);
-                    print(_pw);
-                    if (result.toString() == _pw) {
+                    // print(_pw);
+                    if (items.toString() == _pw) {
                       Navigator.of(context).pop(true);
                     } else {
-                      print("错误");
+                      // print("错误");
+                      // print(_pw);
+                      // print(items.toString() == _pw);
                       Fluttertoast.showToast(
                           msg: "请输入正确的密码",
                           toastLength: Toast.LENGTH_SHORT,

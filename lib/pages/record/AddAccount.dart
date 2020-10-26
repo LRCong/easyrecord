@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'jh_picker_tool.dart';
+import 'package:easyrecord/db/db_helper.dart';
+import 'package:easyrecord/models/bill_model.dart';
 
 class AddAccountPage extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class AddAccountPage extends StatefulWidget {
 
 class _AddAcountPageState extends State<AddAccountPage> {
   var theType = "现金";
+  var newAccount = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class _AddAcountPageState extends State<AddAccountPage> {
               fontSize: 40.0,
               // fontFamily:
             ),
+            controller: newAccount,
           ),
         ),
         SizedBox(
@@ -50,6 +54,8 @@ class _AddAcountPageState extends State<AddAccountPage> {
               child: Text("保存"),
               onPressed: () {
                 print("已保存");
+                print(newAccount.text);
+                dbHelp.insertAccount(newAccount.text);
                 Navigator.pop(context);
               },
               color: Colors.blue,
@@ -61,5 +67,3 @@ class _AddAcountPageState extends State<AddAccountPage> {
     );
   }
 }
-
-const accountType = ["现金账户", "信用账户", "金融账户", "投资账户", "虚拟账户"];

@@ -342,9 +342,7 @@ class _EditPayPageState extends State<EditPayPage> {
                           textColor: Colors.white,
                           child: Text('删除'),
                           onPressed: () {
-                            setState(() {
-                              dbHelper.deleteAccount(item.id);
-                            });
+                            dbHelper.deleteAccount(item.id);
                             Navigator.pop(context);
                           },
                         ),

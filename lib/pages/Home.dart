@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,6 @@ class _HomeState extends State<Home> {
   int _weekGet = 0;
   int _monthGet = 0;
   int _yearGet = 0;
-  var _now = DateTime.now();
 
   @override
   void initState() {
@@ -79,7 +77,7 @@ class _HomeState extends State<Home> {
       _weekPay = newWeek;
       _monthPay = newMonth;
       _yearPay = newYear;
-      print(_dayPay);
+      // print(_dayPay);
       setState(() {});
     });
   }
